@@ -1,208 +1,157 @@
-// ========== CMS INTEGRATION & JOB LOADING ==========
-let allJobs = [];
-let currentJobId = null;
+// ========== CMS CONFIG ==========
+const SPACE_ID = window.CMS_CONFIG.SPACE_ID;
+const ACCESS_TOKEN = window.CMS_CONFIG.ACCESS_TOKEN;
+const ENVIRONMENT = window.CMS_CONFIG.ENVIRONMENT || 'master';
 
-// Initialize the app when DOM loads
-document.addEventListener('DOMContentLoaded', async () => {
-  showLoading();
-  await loadJobsFromCMS();
-  hideLoading();
-  renderJobs();
+const client = contentful.createClient({
+  space: SPACE_ID,
+  accessToken: ACCESS_TOKEN,
+  environment: ENVIRONMENT
 });
 
-// Load jobs from CMS or fallback to mock data
+// Ensure the CMS client loads properly
+function createCMSClient() {
+  if (!window.contentful) {
+    console.error("❌ Contentful SDK not loaded.");
+    return null;
+  }
+
+  const config = window.CMS_CONFIG;
+  if (!config?.SPACE_ID || !config?.ACCESS_TOKEN) {
+    console.error("❌ Missing CMS_CONFIG variables.");
+    return null;
+  }
+
+  return contentful.createClient({
+    space: config.SPACE_ID,
+    accessToken: config.ACCESS_TOKEN,
+    environment: config.ENVIRONMENT || 'master',
+  });
+}
+
+// Main CMS job loader
 async function loadJobsFromCMS() {
+  console.log("📡 Fetching jobs from Contentful...");
+
   try {
-    // Check if CMS configuration exists
-    if (!window.CMS_CONFIG || !window.CMS_CONFIG.SPACE_ID) {
-      console.warn('CMS not configured, using mock data');
-      allJobs = getMockJobs();
-      return;
+    const client = contentful.createClient({
+      space: 'an5z1jbyxt43',
+      accessToken: 'ZKGyB6RWFaUfcU0AQYzW98zjHA0x9hbDDMg9H0WFMN4',
+    });
+
+    const response = await client.getEntries({ content_type: 'job' });
+    const items = response.items;
+
+    console.log("✅ CMS response:", items);
+
+    if (!Array.isArray(items) || items.length === 0) {
+      throw new Error("No items returned from CMS.");
     }
 
-    // Fetch from Contentful CMS
-    const response = await fetch(
-      `https://cdn.contentful.com/spaces/${window.CMS_CONFIG.SPACE_ID}/environments/${window.CMS_CONFIG.ENVIRONMENT}/entries?content_type=job&access_token=${window.CMS_CONFIG.ACCESS_TOKEN}`
-    );
+    const jobs = items
+      .map((item, i) => {
+        const fields = item.fields || {};
+        const title = fields.title || "Untitled";
+        const description = fields.description || "No description";
+        const salary = fields.salary || "N/A";
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch jobs from CMS');
+        // Handle location
+        let location = "unknown";
+        if (typeof fields.location === "string") {
+          location = fields.location.toLowerCase();
+        } else if (
+          fields.location?.fields?.name &&
+          typeof fields.location.fields.name === "string"
+        ) {
+          location = fields.location.fields.name.toLowerCase();
+        }
+
+        // Handle specialty
+        let specialty = "unspecified";
+        if (typeof fields.specialty === "string") {
+          specialty = fields.specialty.toLowerCase();
+        } else if (
+          fields.specialty?.fields?.name &&
+          typeof fields.specialty.fields.name === "string"
+        ) {
+          specialty = fields.specialty.fields.name.toLowerCase();
+        }
+
+        // Sanity check
+        if (!title || !location || !specialty) {
+          console.warn(`⚠️ Invalid item shape [${i}]:`, item);
+          return null;
+        }
+
+        return { title, location, specialty, description, salary };
+      })
+      .filter(Boolean); // Remove nulls
+
+    if (jobs.length === 0) {
+      throw new Error("No valid jobs returned from CMS.");
     }
 
-    const data = await response.json();
-    allJobs = formatCMSJobs(data);
-    console.log('Jobs loaded successfully from CMS');
+    renderJobs(jobs);
   } catch (error) {
-    console.warn('CMS loading failed, using mock data:', error);
-    allJobs = getMockJobs();
+    useMockJobs(error);
   }
 }
 
-// Format CMS data to standard format
-function formatCMSJobs(cmsData) {
-  return cmsData.items.map(item => ({
-    id: item.sys.id,
-    title: item.fields.title,
-    location: item.fields.location?.toLowerCase() || 'england',
-    specialty: item.fields.specialty?.toLowerCase().replace(/\s+/g, '-') || 'health-assistant',
-    description: item.fields.description,
-    salary: item.fields.salary || 'Competitive',
-    type: item.fields.type || 'Full-time',
-    posted: item.fields.postedDate || new Date().toISOString().split('T')[0],
-    requirements: item.fields.requirements || []
-  }));
-}
+// Fallback: use mock jobs if CMS fails
+function useMockJobs(error) {
+  console.error("❌ CMS loading failed, using mock data:", error);
 
-// Mock data for fallback
-function getMockJobs() {
-  return [
+  const mockJobs = [
     {
-      id: '1',
-      title: 'Senior Health Assistant',
-      location: 'england',
-      specialty: 'health-assistant',
-      description: 'We are seeking a dedicated Senior Health Assistant to join our dynamic healthcare team. You will provide essential support to medical professionals while ensuring excellent patient care standards.',
-      salary: '£28,000 - £32,000',
-      type: 'Full-time',
-      posted: '2025-06-25',
-      requirements: ['NVQ Level 2 in Health & Social Care', '2+ years experience', 'Excellent communication skills']
+      id: "mock-1",
+      title: "Registered Nurse - London",
+      location: "england",
+      specialty: "nurse",
+      description: "Mock job for testing.",
     },
     {
-      id: '2',
-      title: 'Registered Mental Health Nurse',
-      location: 'wales',
-      specialty: 'nurse',
-      description: 'Join our compassionate mental health team as a Registered Mental Health Nurse. You will provide specialized care to patients with mental health conditions in a supportive environment.',
-      salary: '£35,000 - £42,000',
-      type: 'Full-time',
-      posted: '2025-06-24',
-      requirements: ['RMN qualification', 'NMC registration', 'Experience in mental health settings']
-    },
-    {
-      id: '3',
-      title: 'Kitchen Assistant',
-      location: 'england',
-      specialty: 'kitchen',
-      description: 'We are looking for a reliable Kitchen Assistant to support our catering team in providing nutritious meals for patients and staff in our healthcare facility.',
-      salary: '£20,000 - £24,000',
-      type: 'Part-time',
-      posted: '2025-06-23',
-      requirements: ['Food hygiene certificate', 'Previous kitchen experience preferred', 'Team player attitude']
-    },
-    {
-      id: '4',
-      title: 'Housekeeper - Healthcare Facility',
-      location: 'england',
-      specialty: 'housekeeping',
-      description: 'Maintain the highest standards of cleanliness and hygiene in our healthcare facility. You will play a crucial role in infection control and patient safety.',
-      salary: '£19,000 - £22,000',
-      type: 'Full-time',
-      posted: '2025-06-22',
-      requirements: ['Experience in healthcare cleaning', 'Knowledge of infection control', 'Attention to detail']
-    },
-    {
-      id: '5',
-      title: 'Registered General Nurse',
-      location: 'wales',
-      specialty: 'nurse',
-      description: 'We have an exciting opportunity for a Registered General Nurse to join our medical ward team. You will provide comprehensive nursing care to patients across various medical conditions.',
-      salary: '£32,000 - £38,000',
-      type: 'Full-time',
-      posted: '2025-06-21',
-      requirements: ['RGN qualification', 'NMC registration', 'Minimum 1 year experience']
-    },
-    {
-      id: '6',
-      title: 'Health Assistant - Community Care',
-      location: 'wales',
-      specialty: 'health-assistant',
-      description: 'Support our community healthcare team by providing essential care services to patients in their homes and community settings.',
-      salary: '£24,000 - £28,000',
-      type: 'Full-time',
-      posted: '2025-06-20',
-      requirements: ['Care certificate', 'Driving license', 'Compassionate nature']
+      id: "mock-2",
+      title: "Health Assistant - Cardiff",
+      location: "wales",
+      specialty: "health-assistant",
+      description: "Mock job for testing.",
     }
   ];
+
+  renderJobs(mockJobs);
 }
 
-// Render jobs to the page
-function renderJobs() {
-  const container = document.getElementById('jobsContainer');
-  const noJobsMessage = document.getElementById('noJobsMessage');
+// Dummy render function (replace with your real one)
+function renderJobs(jobs) {
+  const container = document.getElementById("jobsContainer");
+  container.innerHTML = "";
 
-  if (allJobs.length === 0) {
-    container.innerHTML = '';
-    noJobsMessage.style.display = 'block';
+  if (!jobs.length) {
+    document.getElementById("noJobsMessage").style.display = "block";
     return;
   }
 
-  noJobsMessage.style.display = 'none';
-
-  container.innerHTML = allJobs.map((job, index) => `
-    <div class="job-card"
-         data-location="${job.location}"
-         data-specialty="${job.specialty}"
-         style="animation-delay: ${index * 0.1}s">
-      <div class="job-content">
-        <h3>${job.title}</h3>
-        <div class="job-meta">
-          <span><i class="fas fa-map-marker-alt"></i> ${formatLocation(job.location)}</span>
-          <span><i class="fas fa-briefcase"></i> ${job.type}</span>
-          <span><i class="fas fa-pound-sign"></i> ${job.salary}</span>
-          <span><i class="fas fa-calendar"></i> Posted ${formatDate(job.posted)}</span>
-        </div>
-        <p class="job-description">${job.description}</p>
-      </div>
-      <button class="apply-btn" data-job="${job.title}" data-job-id="${job.id}">
-        Apply Now
-      </button>
-    </div>
-  `).join('');
-
-  // Re-attach event listeners for new buttons
-  attachApplyButtonListeners();
-}
-
-// Utility functions
-function formatLocation(location) {
-  return location.charAt(0).toUpperCase() + location.slice(1);
-}
-
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffTime = Math.abs(now - date);
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-  if (diffDays === 1) return 'today';
-  if (diffDays === 2) return 'yesterday';
-  if (diffDays <= 7) return `${diffDays - 1} days ago`;
-  return date.toLocaleDateString();
-}
-
-function showLoading() {
-  document.getElementById('loadingState').style.display = 'block';
-  document.getElementById('jobsContainer').style.display = 'none';
-}
-
-function hideLoading() {
-  document.getElementById('loadingState').style.display = 'none';
-  document.getElementById('jobsContainer').style.display = 'block';
-}
-
-// Attach event listeners to apply buttons
-function attachApplyButtonListeners() {
-  document.querySelectorAll('.apply-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const jobTitle = btn.dataset.job;
-      const jobId = btn.dataset.jobId;
-      currentJobId = jobId;
-      modalTitle.textContent = `Apply for ${jobTitle}`;
-      document.getElementById('jobId').value = jobId;
-      modal.classList.add('show');
-    });
+  jobs.forEach(job => {
+    const jobCard = document.createElement("div");
+    jobCard.className = "job-card";
+    jobCard.innerHTML = `
+      <h3>${job.title}</h3>
+      <p><strong>Location:</strong> ${job.location}</p>
+      <p><strong>Specialty:</strong> ${job.specialty}</p>
+      <p>${job.description}</p>
+    `;
+    container.appendChild(jobCard);
   });
+
+  document.getElementById("loadingState").style.display = "none";
+  document.getElementById("noJobsMessage").style.display = "none";
 }
+
+// Run on load
+document.addEventListener("DOMContentLoaded", () => {
+  loadJobsFromCMS();
+});
+
 
 // ========== FILTER DROPDOWN LOGIC ==========
 document.querySelectorAll('.filter-toggle').forEach(button => {

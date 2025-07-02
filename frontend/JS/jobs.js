@@ -9,29 +9,8 @@ const client = contentful.createClient({
   environment: ENVIRONMENT
 });
 
-// Ensure the CMS client loads properly
-function createCMSClient() {
-  if (!window.contentful) {
-    console.error("❌ Contentful SDK not loaded.");
-    return null;
-  }
-
-  const config = window.CMS_CONFIG;
-  if (!config?.SPACE_ID || !config?.ACCESS_TOKEN) {
-    console.error("❌ Missing CMS_CONFIG variables.");
-    return null;
-  }
-
-  return contentful.createClient({
-    space: config.SPACE_ID,
-    accessToken: config.ACCESS_TOKEN,
-    environment: config.ENVIRONMENT || 'master',
-  });
-}
-
 // Main CMS job loader
 async function loadJobsFromCMS() {
-  console.log("📡 Fetching jobs from Contentful...");
 
   try {
     const client = contentful.createClient({
@@ -41,8 +20,6 @@ async function loadJobsFromCMS() {
 
     const response = await client.getEntries({ content_type: 'job' });
     const items = response.items;
-
-    console.log("✅ CMS response:", items);
 
     if (!Array.isArray(items) || items.length === 0) {
       throw new Error("No items returned from CMS.");
@@ -54,6 +31,8 @@ async function loadJobsFromCMS() {
         const title = fields.title || "Untitled";
         const description = fields.description || "No description";
         const salary = fields.salary || "N/A";
+        const posted = fields.datePosted || "Recently Posted";
+        const type = fields.type || "Full-Time";
 
         // Handle location
         let location = "unknown";
@@ -77,13 +56,12 @@ async function loadJobsFromCMS() {
           specialty = fields.specialty.fields.name.toLowerCase();
         }
 
-        // Sanity check
-        if (!title || !location || !specialty) {
-          console.warn(`⚠️ Invalid item shape [${i}]:`, item);
-          return null;
-        }
+        // Handle requirements
+        const requirements = Array.isArray(fields.requirements)
+          ? fields.requirements.map(req => (typeof req === 'string' ? req : ''))
+          : [];
 
-        return { title, location, specialty, description, salary };
+        return { title, location, specialty, description, salary, type, posted, requirements };
       })
       .filter(Boolean); // Remove nulls
 
@@ -95,30 +73,6 @@ async function loadJobsFromCMS() {
   } catch (error) {
     useMockJobs(error);
   }
-}
-
-// Fallback: use mock jobs if CMS fails
-function useMockJobs(error) {
-  console.error("❌ CMS loading failed, using mock data:", error);
-
-  const mockJobs = [
-    {
-      id: "mock-1",
-      title: "Registered Nurse - London",
-      location: "england",
-      specialty: "nurse",
-      description: "Mock job for testing.",
-    },
-    {
-      id: "mock-2",
-      title: "Health Assistant - Cardiff",
-      location: "wales",
-      specialty: "health-assistant",
-      description: "Mock job for testing.",
-    }
-  ];
-
-  renderJobs(mockJobs);
 }
 
 // Dummy render function (replace with your real one)
@@ -135,11 +89,29 @@ function renderJobs(jobs) {
     const jobCard = document.createElement("div");
     jobCard.className = "job-card";
     jobCard.innerHTML = `
-      <h3>${job.title}</h3>
-      <p><strong>Location:</strong> ${job.location}</p>
-      <p><strong>Specialty:</strong> ${job.specialty}</p>
-      <p>${job.description}</p>
+
+      <div class="job-content">
+        <h3>${job.title}</h3>
+        <div class="job-meta">
+          <span><i class="fas fa-map-marker-alt"></i> ${job.location}</span>
+          <span><i class="fas fa-briefcase"></i> ${job.specialty}</span>
+          <span><i class="fas fa-clock"></i> ${job.type}</span>
+          <span><i class="fas fa-calendar-alt"></i> ${job.posted}</span>
+          <span><i class="fas fa-pound-sign"></i> £${job.salary}</span>
+        </div>
+        <p class="job-description">${job.description}</p>
+        ${job.requirements && job.requirements.length > 0 ? `
+          <ul class="job-requirements">
+            ${job.requirements.map(req => `<li>${req}</li>`).join('')}
+          </ul>
+        ` : ''}
+      </div>
+
+      <button class="apply-btn" data-job="${job.title}">
+        Apply Now
+      </button>
     `;
+
     container.appendChild(jobCard);
   });
 

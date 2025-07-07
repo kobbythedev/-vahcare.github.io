@@ -1,9 +1,11 @@
 const Job = require('../models/Job');
 const Application = require('../models/Application');
 const upload = require('../middleware/upload');
-const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
 const { mockJobs } = require('../services/mockData');
+const { sendEmail } = require('../config/email');
+const fs = require('fs');
+const path = require('path');
 
 // @desc    Get all jobs
 // @route   GET /api/jobs
@@ -224,55 +226,68 @@ const applyForJob = async (req, res, next) => {
   }
 };
 
-// Email configuration
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
+// Helper function to load and replace placeholders in email templates
+const loadEmailTemplate = (templateName, placeholders) => {
+  try {
+    const templatePath = path.join(__dirname, '../templates', templateName);
+    let template = fs.readFileSync(templatePath, 'utf8');
+    
+    // Replace placeholders with actual values
+    Object.keys(placeholders).forEach(key => {
+      const placeholder = `{{${key}}}`;
+      template = template.replace(new RegExp(placeholder, 'g'), placeholders[key]);
+    });
+    
+    return template;
+  } catch (error) {
+    console.error(`Error loading email template ${templateName}:`, error);
+    // Fallback to basic HTML if template loading fails
+    return `<h2>Email Content</h2><p>Template loading failed</p>`;
   }
-});
+};
 
 // Send application confirmation email
 const sendApplicationConfirmation = async (email, name, jobTitle) => {
-  const mailOptions = {
-    from: process.env.SMTP_USER,
-    to: email,
-    subject: `Application Received - ${jobTitle}`,
-    html: `
-      <h2>Thank you for your application!</h2>
-      <p>Dear ${name},</p>
-      <p>We have received your application for the position of <strong>${jobTitle}</strong>.</p>
-      <p>Our team will review your application and contact you within 5-7 business days.</p>
-      <p>Best regards,<br>VAH Care Recruitment Team</p>
-    `
-  };
-
-  await transporter.sendMail(mailOptions);
+  try {
+    const htmlContent = loadEmailTemplate('application-confirmation.html', {
+      fullName: name,
+      jobTitle: jobTitle
+    });
+    
+    await sendEmail({
+      to: email,
+      subject: `Application Received - ${jobTitle}`,
+      html: htmlContent
+    });
+  } catch (error) {
+    console.error('Error sending application confirmation email:', error);
+    throw error;
+  }
 };
 
 // Send application notification to admin
 const sendApplicationNotification = async (application, job) => {
-  const mailOptions = {
-    from: process.env.SMTP_USER,
-    to: process.env.ADMIN_EMAIL,
-    subject: `New Job Application - ${job.title}`,
-    html: `
-      <h2>New Job Application Received</h2>
-      <p><strong>Job:</strong> ${job.title}</p>
-      <p><strong>Applicant:</strong> ${application.fullName}</p>
-      <p><strong>Email:</strong> ${application.email}</p>
-      <p><strong>Experience:</strong> ${application.experience}</p>
-      <p><strong>Availability:</strong> ${application.availability}</p>
-      <p><strong>Message:</strong> ${application.message || 'No message provided'}</p>
-      <p><strong>CV:</strong> ${application.cvPath}</p>
-      <p><strong>Applied At:</strong> ${application.appliedAt}</p>
-    `
-  };
-
-  await transporter.sendMail(mailOptions);
+  try {
+    const htmlContent = loadEmailTemplate('application-notification.html', {
+      jobTitle: job.title,
+      fullName: application.fullName,
+      email: application.email,
+      experience: application.experience,
+      availability: application.availability,
+      message: application.message || 'No message provided',
+      cvPath: application.cvPath,
+      appliedAt: application.appliedAt
+    });
+    
+    await sendEmail({
+      to: process.env.ADMIN_EMAIL,
+      subject: `New Job Application - ${job.title}`,
+      html: htmlContent
+    });
+  } catch (error) {
+    console.error('Error sending application notification email:', error);
+    throw error;
+  }
 };
 
 module.exports = {

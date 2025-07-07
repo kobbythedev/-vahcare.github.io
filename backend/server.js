@@ -4,7 +4,9 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const compression = require('compression');
 const path = require('path');
-require('dotenv').config();
+
+// Load environment variables from parent directory
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 // Import database connection
 const connectDB = require('./config/database');

@@ -1,4 +1,4 @@
-// ========== CMS CONFIG ==========
+
 const SPACE_ID = window.CMS_CONFIG.SPACE_ID;
 const ACCESS_TOKEN = window.CMS_CONFIG.ACCESS_TOKEN;
 const ENVIRONMENT = window.CMS_CONFIG.ENVIRONMENT || 'master';

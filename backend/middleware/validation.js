@@ -2,7 +2,7 @@ const { body, validationResult } = require('express-validator');
 
 // Validation for job application
 const validateJobApplication = [
-  body('jobId').isMongoId().withMessage('Invalid job ID'),
+  body('jobId').trim().isLength({ min: 1 }).withMessage('Job ID is required'),
   body('fullName').trim().isLength({ min: 2, max: 100 }).withMessage('Full name must be between 2 and 100 characters'),
   body('email').isEmail().normalizeEmail().withMessage('Please provide a valid email'),
   body('experience').isIn(['0-1', '1-3', '3-5', '5+']).withMessage('Please select a valid experience level'),

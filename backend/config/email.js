@@ -23,7 +23,7 @@ let transporter = null;
 
 const createTransporter = () => {
   try {
-    transporter = nodemailer.createTransporter(emailConfig);
+    transporter = nodemailer.createTransport(emailConfig);
     console.log('✅ Email transporter created');
     return transporter;
   } catch (error) {

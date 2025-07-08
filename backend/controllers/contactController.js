@@ -109,6 +109,14 @@ const getContacts = async (req, res, next) => {
 // @access  Private (Admin)
 const updateContactStatus = async (req, res, next) => {
   try {
+    // Validate ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid contact ID format'
+      });
+    }
+
     const { status } = req.body;
 
     const contact = await Contact.findByIdAndUpdate(

@@ -3,17 +3,28 @@ const SPACE_ID = window.CMS_CONFIG.SPACE_ID;
 const ACCESS_TOKEN = window.CMS_CONFIG.ACCESS_TOKEN;
 const ENVIRONMENT = window.CMS_CONFIG.ENVIRONMENT || 'master';
 
-const client = contentful.createClient({
-  space: SPACE_ID,
-  accessToken: ACCESS_TOKEN,
-  environment: ENVIRONMENT
-});
+// Initialize Contentful client only if credentials are available
+let client = null;
+if (SPACE_ID && ACCESS_TOKEN) {
+  client = contentful.createClient({
+    space: SPACE_ID,
+    accessToken: ACCESS_TOKEN,
+    environment: ENVIRONMENT
+  });
+}
 
 let currentJobId = null; // Track job being applied to
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+  ? 'http://localhost:5000' 
+  : '';
 
 // ========== LOAD JOBS FROM CMS ==========
 async function loadJobsFromCMS() {
   try {
+    if (!client) {
+      throw new Error("CMS credentials not configured");
+    }
+
     const response = await client.getEntries({ content_type: 'job' });
     const items = response.items;
 
@@ -65,9 +76,52 @@ async function loadJobsFromCMS() {
     if (jobs.length === 0) throw new Error("No valid jobs returned from CMS.");
     renderJobs(jobs);
   } catch (error) {
-    console.error(error);
+    console.error('Error loading jobs from CMS:', error);
     useMockJobs(error);
   }
+}
+
+// ========== FALLBACK TO MOCK JOBS ==========
+function useMockJobs(error) {
+  console.warn("Falling back to mock jobs due to:", error.message);
+  
+  const mockJobs = [
+    {
+      id: "mock-1",
+      title: "Registered Nurse - Care Home",
+      location: "england",
+      specialty: "nurse",
+      description: "We are seeking a compassionate and skilled Registered Nurse to join our team at a well-established care home in England.",
+      salary: "30,000 - 35,000",
+      type: "Full-Time",
+      posted: "Recently Posted",
+      requirements: ["Valid nursing qualification", "Minimum 2 years experience", "Excellent communication skills"]
+    },
+    {
+      id: "mock-2",
+      title: "Health Care Assistant - Dementia Care",
+      location: "wales",
+      specialty: "health-assistant",
+      description: "Join our dedicated team as a Health Care Assistant specializing in dementia care.",
+      salary: "22,000 - 25,000",
+      type: "Full-Time",
+      posted: "Recently Posted",
+      requirements: ["Care certificate or equivalent", "Experience in dementia care preferred", "Compassionate nature"]
+    },
+    {
+      id: "mock-3",
+      title: "Kitchen Assistant - Nutritional Care",
+      location: "england",
+      specialty: "kitchen",
+      description: "We are looking for a reliable Kitchen Assistant to join our nutrition team.",
+      salary: "20,000 - 23,000",
+      type: "Full-Time",
+      posted: "Recently Posted",
+      requirements: ["Food hygiene certificate", "Team player", "Attention to detail"]
+    }
+  ];
+  
+  renderJobs(mockJobs);
 }
 
 // ========== RENDER JOBS ==========

@@ -2,7 +2,6 @@ const Job = require('../models/Job');
 const Application = require('../models/Application');
 const upload = require('../middleware/upload');
 const mongoose = require('mongoose');
-const { mockJobs } = require('../services/mockData');
 const { sendEmail } = require('../config/email');
 const fs = require('fs');
 const path = require('path');
@@ -12,39 +11,15 @@ const path = require('path');
 // @access  Public
 const getJobs = async (req, res, next) => {
   try {
-    const { location, specialty, page = 1, limit = 10 } = req.query;
-    
     // Check if MongoDB is connected
     if (mongoose.connection.readyState !== 1) {
-      // Use mock data when MongoDB is not connected
-      let filteredJobs = [...mockJobs];
-      
-      // Apply filters
-      if (location && location !== 'all') {
-        filteredJobs = filteredJobs.filter(job => 
-          job.location.toLowerCase().includes(location.toLowerCase())
-        );
-      }
-      if (specialty && specialty !== 'all') {
-        filteredJobs = filteredJobs.filter(job => 
-          job.specialty.toLowerCase().includes(specialty.toLowerCase())
-        );
-      }
-      
-      // Apply pagination
-      const skip = (page - 1) * limit;
-      const paginatedJobs = filteredJobs.slice(skip, skip + parseInt(limit));
-      
-      return res.status(200).json({
-        success: true,
-        count: paginatedJobs.length,
-        total: filteredJobs.length,
-        page: parseInt(page),
-        pages: Math.ceil(filteredJobs.length / limit),
-        data: paginatedJobs,
-        note: 'Using mock data - MongoDB not connected'
+      return res.status(503).json({
+        success: false,
+        error: 'Database connection unavailable. Please try again later.'
       });
     }
+    
+    const { location, specialty, page = 1, limit = 10 } = req.query;
     
     // Build filter object for MongoDB
     const filter = {};
@@ -85,6 +60,22 @@ const getJobs = async (req, res, next) => {
 // @access  Public
 const getJob = async (req, res, next) => {
   try {
+    // Check if MongoDB is connected
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({
+        success: false,
+        error: 'Database connection unavailable. Please try again later.'
+      });
+    }
+    
+    // Validate ObjectId format for database operations
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid job ID format'
+      });
+    }
+
     const job = await Job.findById(req.params.id);
 
     if (!job) {
@@ -124,6 +115,14 @@ const createJob = async (req, res, next) => {
 // @access  Private (Admin)
 const updateJob = async (req, res, next) => {
   try {
+    // Validate ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid job ID format'
+      });
+    }
+
     const job = await Job.findByIdAndUpdate(
       req.params.id,
       req.body,
@@ -154,6 +153,14 @@ const updateJob = async (req, res, next) => {
 // @access  Private (Admin)
 const deleteJob = async (req, res, next) => {
   try {
+    // Validate ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid job ID format'
+      });
+    }
+
     const job = await Job.findByIdAndDelete(req.params.id);
 
     if (!job) {
@@ -183,6 +190,14 @@ const applyForJob = async (req, res, next) => {
     
     // Check if MongoDB is connected
     if (mongoose.connection.readyState === 1) {
+      // Validate jobId format for database operations
+      if (!mongoose.Types.ObjectId.isValid(jobId)) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid job ID format'
+        });
+      }
+      
       // Check if job exists in database
       job = await Job.findById(jobId);
       if (!job) {
@@ -192,14 +207,10 @@ const applyForJob = async (req, res, next) => {
         });
       }
     } else {
-      // Use mock data when database is not connected
-      job = mockJobs.find(j => j._id === jobId);
-      if (!job) {
-        return res.status(404).json({
-          success: false,
-          error: 'Job not found'
-        });
-      }
+      return res.status(503).json({
+        success: false,
+        error: 'Database connection unavailable. Please try again later.'
+      });
     }
 
     // Check if CV file was uploaded
@@ -251,14 +262,23 @@ const applyForJob = async (req, res, next) => {
 
     // Send confirmation email to applicant (non-blocking)
     try {
-      await sendApplicationConfirmation(email, fullName, job.title);
+      const { sendApplicationConfirmation, sendAdminNotification } = require('../config/email');
+      await sendApplicationConfirmation(email, fullName, job.title, application._id);
     } catch (emailError) {
       console.log('⚠️  Failed to send confirmation email:', emailError.message);
     }
 
     // Send notification email to admin (non-blocking)
     try {
-      await sendApplicationNotification(application, job);
+      const { sendAdminNotification } = require('../config/email');
+      await sendAdminNotification({
+        applicantName: fullName,
+        applicantEmail: email,
+        jobTitle: job.title,
+        experience,
+        availability,
+        applicationId: application._id
+      });
     } catch (emailError) {
       console.log('⚠️  Failed to send admin notification:', emailError.message);
     }

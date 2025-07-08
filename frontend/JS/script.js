@@ -51,57 +51,70 @@ document.addEventListener('DOMContentLoaded', function() {
   // ==============
   // Form Handling
   // ==============
-  const contactForm = document.getElementById('vahcareForm');
-  const loadingSpinner = document.querySelector('.loading-spinner');
-  const successModal = document.querySelector('.success-modal');
-  const modalMessage = document.querySelector('.modal-message');
+  const contactForm = document.querySelector('form');
 
   if (contactForm) {
     contactForm.addEventListener('submit', async function(e) {
       e.preventDefault();
 
-      // Show loading spinner
-      loadingSpinner.style.display = 'flex';
+      // Get form elements
+      const submitBtn = contactForm.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.textContent;
+      
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
 
       // Validate form
       const errors = validateForm();
       if (errors.length > 0) {
         showFormErrors(errors);
-        loadingSpinner.style.display = 'none';
+        resetButton();
         return;
       }
 
-      // Simulate form submission (replace with actual fetch in production)
       try {
         const formData = getFormData();
-        await simulateSubmission(formData);
+        await submitContactForm(formData);
 
-        // Show success modal
-        showSuccessModal(formData.service);
+        // Show success message
+        showSuccessToast('Thank you for your message! We will contact you soon.');
 
         // Reset form
         contactForm.reset();
       } catch (error) {
-        showFormErrors(['Submission failed. Please try again later.']);
+        console.error('Contact form submission error:', error);
+        showErrorToast('Failed to send message. Please try again later.');
       } finally {
-        loadingSpinner.style.display = 'none';
+        resetButton();
+      }
+      
+      function resetButton() {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
       }
     });
   }
 
-  // Modal close handlers
-  document.querySelectorAll('.close-modal, .modal-close').forEach(btn => {
-    btn.addEventListener('click', () => {
-      successModal.style.display = 'none';
-    });
-  });
+  // Modal references for legacy support (if needed)
+  const successModal = document.querySelector('.success-modal');
+  const modalMessage = document.querySelector('.modal-message');
 
-  // Close modal when clicking outside
-  successModal.addEventListener('click', (e) => {
-    if (e.target === successModal) {
-      successModal.style.display = 'none';
-    }
-  });
+  if (successModal) {
+    // Modal close handlers
+    document.querySelectorAll('.close-modal, .modal-close').forEach(btn => {
+      btn.addEventListener('click', () => {
+        successModal.style.display = 'none';
+      });
+    });
+
+    // Close modal when clicking outside
+    successModal.addEventListener('click', (e) => {
+      if (e.target === successModal) {
+        successModal.style.display = 'none';
+      }
+    });
+  }
 
   // ==============
   // Animations
@@ -187,24 +200,107 @@ document.addEventListener('DOMContentLoaded', function() {
     };
   }
 
-  function simulateSubmission(data) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        console.log('Form submitted:', data);
-        resolve();
-      }, 1500); // Simulate network delay
-    });
+  // Submit contact form to backend
+  async function submitContactForm(data) {
+    // For development, determine the base URL
+    const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+      ? 'http://localhost:5000' 
+      : '';
 
-    /* Production version would use:
-    return fetch('/submit-form', {
+    const response = await fetch(`${baseURL}/api/contact`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(data)
     });
-    */
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to submit contact form');
+    }
+
+    return await response.json();
+  }
+
+  // Show success toast notification
+  function showSuccessToast(message) {
+    showToast(message, 'success');
+  }
+
+  // Show error toast notification
+  function showErrorToast(message) {
+    showToast(message, 'error');
+  }
+
+  // Generic toast function
+  function showToast(message, type = 'success') {
+    // Remove existing toasts
+    document.querySelectorAll('.toast').forEach(toast => toast.remove());
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+      <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+      <span>${message}</span>
+    `;
+
+    // Add styles
+    toast.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: ${type === 'success' ? '#2a7f62' : '#dc3545'};
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 10000;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 300px;
+      opacity: 0;
+      transform: translateX(100%);
+      transition: all 0.3s ease;
+    `;
+
+    document.body.appendChild(toast);
+
+    // Animate in
+    setTimeout(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(0)';
+    }, 10);
+
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(100%)';
+      setTimeout(() => {
+        if (toast.parentNode) {
+          toast.parentNode.removeChild(toast);
+        }
+      }, 300);
+    }, 5000);
+
+    // Allow manual close on click
+    toast.addEventListener('click', () => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(100%)';
+      setTimeout(() => {
+        if (toast.parentNode) {
+          toast.parentNode.removeChild(toast);
+        }
+      }, 300);
+    });
   }
 
   function showSuccessModal(serviceType) {
+    if (!modalMessage || !successModal) return;
+    
     const serviceNames = {
       'home_care': 'Home Care',
       'specialized_service': 'Specialized Service',
@@ -225,21 +321,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initializeTooltips() {
   // Can be expanded with actual tooltip library initialization
-  console.log('Tooltips initialized');
+  console.log('VAH Care - Frontend initialized successfully');
 }
-
-// Fetch jobs
-fetch('http://localhost:5000/jobs')
-  .then(res => res.json())
-  .then(jobs => console.log(jobs));
-
-// Submit application
-const formData = new FormData();
-formData.append('cv', cvFile); // From file input
-formData.append('name', 'John Doe');
-// Add other fields...
-
-fetch('http://localhost:5000/apply', {
-  method: 'POST',
-  body: formData
-});

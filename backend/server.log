@@ -1,0 +1,113 @@
+nohup: ignoring input
+
+> vahcare-backend@1.0.0 start
+> node server.js
+
+🚀 VAH Care API Server running on port 5000
+📍 Environment: development
+🌐 CORS enabled for: Development localhost
+error: Database connection failed: Could not connect to any servers in your MongoDB Atlas cluster. One common reason is that you're trying to access the database from an IP that isn't whitelisted. Make sure your current IP address is on your Atlas cluster's IP whitelist: https://www.mongodb.com/docs/atlas/security-whitelist/ {"reason":{"commonWireVersion":0,"compatible":true,"heartbeatFrequencyMS":10000,"localThresholdMS":15,"logicalSessionTimeoutMinutes":null,"maxElectionId":null,"maxSetVersion":null,"servers":{},"setName":"atlas-lmavh7-shard-0","stale":false,"type":"ReplicaSetNoPrimary"},"stack":"MongooseServerSelectionError: Could not connect to any servers in your MongoDB Atlas cluster. One common reason is that you're trying to access the database from an IP that isn't whitelisted. Make sure your current IP address is on your Atlas cluster's IP whitelist: https://www.mongodb.com/docs/atlas/security-whitelist/\n    at _handleConnectionErrors (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/mongoose/lib/connection.js:816:11)\n    at NativeConnection.openUri (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/mongoose/lib/connection.js:791:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async connectDB (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/config/database.js:17:18)"}
+warn: ⚠️  Running without database - API will work but data won't persist
+warn: 💡 Install MongoDB to enable data persistence:
+warn:    sudo pacman -S mongodb-bin (Arch Linux)
+warn:    sudo systemctl start mongodb
+[0mGET /api/health [32m200[0m 4.276 ms - 91[0m
+📝 Contact form submitted (DB offline): {
+  name: 'Test User',
+  email: 'test@example.com',
+  service: 'home_care',
+  message: 'This is a test message from the automated test sui...',
+  timestamp: '2025-07-08T07:19:18.536Z'
+}
+⚠️  Failed to send confirmation email: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 5b1f17b1804b1-454cd38fbbfsm13753235e9.7 - gsmtp
+⚠️  Failed to send admin notification: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials ffacd0b85a97d-3b471b97353sm12379893f8f.51 - gsmtp
+[0mPOST /api/contact [32m201[0m 4694.244 ms - 119[0m
+💼 Job application submitted (DB offline): {
+  applicationId: '1751959163230',
+  jobTitle: 'Registered Nurse - Care Home',
+  fullName: 'Test Applicant',
+  email: 'applicant@example.com',
+  experience: '3-5',
+  timestamp: '2025-07-08T07:19:23.230Z'
+}
+Error loading email template application-confirmation.html: Error: ENOENT: no such file or directory, open '/home/KOBBY/GitHub/PatrickProject/vahcare/backend/templates/application-confirmation.html'
+    at Object.readFileSync (node:fs:442:20)
+    at loadEmailTemplate (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:283:23)
+    at sendApplicationConfirmation (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:302:25)
+    at applyForJob (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:254:13)
+    at Layer.handle [as handle_request] (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express/lib/router/route.js:149:13)
+    at checkValidation (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/middleware/validation.js:41:3)
+    at Layer.handle [as handle_request] (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express/lib/router/route.js:149:13)
+    at middleware (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express-validator/lib/middlewares/check.js:16:13) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/home/KOBBY/GitHub/PatrickProject/vahcare/backend/templates/application-confirmation.html'
+}
+❌ Error creating email transporter: TypeError: nodemailer.createTransporter is not a function
+    at createTransporter (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/config/email.js:26:30)
+    at sendEmail (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/config/email.js:214:5)
+    at sendApplicationConfirmation (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:307:11)
+    at applyForJob (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:254:13)
+    at Layer.handle [as handle_request] (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express/lib/router/route.js:149:13)
+    at checkValidation (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/middleware/validation.js:41:3)
+    at Layer.handle [as handle_request] (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express/lib/router/route.js:149:13)
+    at middleware (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express-validator/lib/middlewares/check.js:16:13)
+Error sending email: TypeError: Cannot read properties of null (reading 'sendMail')
+    at sendEmail (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/config/email.js:229:38)
+    at sendApplicationConfirmation (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:307:11)
+    at applyForJob (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:254:13)
+    at Layer.handle [as handle_request] (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express/lib/router/route.js:149:13)
+    at checkValidation (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/middleware/validation.js:41:3)
+    at Layer.handle [as handle_request] (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express/lib/router/route.js:149:13)
+    at middleware (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express-validator/lib/middlewares/check.js:16:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error sending application confirmation email: TypeError: Cannot read properties of null (reading 'sendMail')
+    at sendEmail (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/config/email.js:229:38)
+    at sendApplicationConfirmation (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:307:11)
+    at applyForJob (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:254:13)
+    at Layer.handle [as handle_request] (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express/lib/router/route.js:149:13)
+    at checkValidation (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/middleware/validation.js:41:3)
+    at Layer.handle [as handle_request] (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express/lib/router/route.js:149:13)
+    at middleware (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/node_modules/express-validator/lib/middlewares/check.js:16:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+⚠️  Failed to send confirmation email: Cannot read properties of null (reading 'sendMail')
+Error loading email template application-notification.html: Error: ENOENT: no such file or directory, open '/home/KOBBY/GitHub/PatrickProject/vahcare/backend/templates/application-notification.html'
+    at Object.readFileSync (node:fs:442:20)
+    at loadEmailTemplate (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:283:23)
+    at sendApplicationNotification (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:321:25)
+    at applyForJob (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:261:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/home/KOBBY/GitHub/PatrickProject/vahcare/backend/templates/application-notification.html'
+}
+❌ Error creating email transporter: TypeError: nodemailer.createTransporter is not a function
+    at createTransporter (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/config/email.js:26:30)
+    at sendEmail (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/config/email.js:214:5)
+    at sendApplicationNotification (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:332:11)
+    at applyForJob (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:261:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error sending email: TypeError: Cannot read properties of null (reading 'sendMail')
+    at sendEmail (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/config/email.js:229:38)
+    at sendApplicationNotification (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:332:11)
+    at applyForJob (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:261:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error sending application notification email: TypeError: Cannot read properties of null (reading 'sendMail')
+    at sendEmail (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/config/email.js:229:38)
+    at sendApplicationNotification (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:332:11)
+    at applyForJob (/home/KOBBY/GitHub/PatrickProject/vahcare/backend/controllers/jobController.js:261:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+⚠️  Failed to send admin notification: Cannot read properties of null (reading 'sendMail')
+[0mPOST /api/jobs/apply [32m201[0m 22.318 ms - 146[0m

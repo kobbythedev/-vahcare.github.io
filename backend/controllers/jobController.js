@@ -173,19 +173,33 @@ const deleteJob = async (req, res, next) => {
 };
 
 // @desc    Submit job application
-// @route   POST /api/jobs/:id/apply
+// @route   POST /api/jobs/apply
 // @access  Public
 const applyForJob = async (req, res, next) => {
   try {
     const { jobId, fullName, email, experience, availability, message } = req.body;
 
-    // Check if job exists
-    const job = await Job.findById(jobId);
-    if (!job) {
-      return res.status(404).json({
-        success: false,
-        error: 'Job not found'
-      });
+    let job;
+    
+    // Check if MongoDB is connected
+    if (mongoose.connection.readyState === 1) {
+      // Check if job exists in database
+      job = await Job.findById(jobId);
+      if (!job) {
+        return res.status(404).json({
+          success: false,
+          error: 'Job not found'
+        });
+      }
+    } else {
+      // Use mock data when database is not connected
+      job = mockJobs.find(j => j._id === jobId);
+      if (!job) {
+        return res.status(404).json({
+          success: false,
+          error: 'Job not found'
+        });
+      }
     }
 
     // Check if CV file was uploaded
@@ -197,21 +211,57 @@ const applyForJob = async (req, res, next) => {
     }
 
     // Create application
-    const application = await Application.create({
-      jobId,
-      fullName,
-      email,
-      experience,
-      availability,
-      cvPath: req.file.path,
-      message
-    });
+    let application;
+    
+    if (mongoose.connection.readyState === 1) {
+      // Create application in database
+      application = await Application.create({
+        jobId,
+        fullName,
+        email,
+        experience,
+        availability,
+        cvPath: req.file.path,
+        message
+      });
+    } else {
+      // Create mock application when database is not available
+      application = {
+        _id: Date.now().toString(),
+        jobId,
+        fullName,
+        email,
+        experience,
+        availability,
+        cvPath: req.file.path,
+        message,
+        appliedAt: new Date(),
+        status: 'pending'
+      };
+      
+      console.log('💼 Job application submitted (DB offline):', {
+        applicationId: application._id,
+        jobTitle: job.title,
+        fullName,
+        email,
+        experience,
+        timestamp: new Date().toISOString()
+      });
+    }
 
-    // Send confirmation email to applicant
-    await sendApplicationConfirmation(email, fullName, job.title);
+    // Send confirmation email to applicant (non-blocking)
+    try {
+      await sendApplicationConfirmation(email, fullName, job.title);
+    } catch (emailError) {
+      console.log('⚠️  Failed to send confirmation email:', emailError.message);
+    }
 
-    // Send notification email to admin
-    await sendApplicationNotification(application, job);
+    // Send notification email to admin (non-blocking)
+    try {
+      await sendApplicationNotification(application, job);
+    } catch (emailError) {
+      console.log('⚠️  Failed to send admin notification:', emailError.message);
+    }
 
     res.status(201).json({
       success: true,

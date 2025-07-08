@@ -245,7 +245,7 @@ document.getElementById('jobApplicationForm').addEventListener('submit', async f
   try {
     const formData = new FormData();
     formData.append('jobId', currentJobId);
-    formData.append('name', name);
+    formData.append('fullName', name);
     formData.append('email', email);
     formData.append('experience', experience);
     formData.append('availability', availability);
@@ -269,14 +269,24 @@ document.getElementById('jobApplicationForm').addEventListener('submit', async f
   }
 });
 
-// ========== MOCK SUBMISSION ==========
+// ========== SUBMIT APPLICATION TO BACKEND ==========
 async function submitApplication(formData) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (Math.random() > 0.1) resolve({ success: true });
-      else reject(new Error('Submission failed'));
-    }, 1500);
+  // For development, determine the base URL
+  const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+    ? 'http://localhost:5000' 
+    : '';
+
+  const response = await fetch(`${baseURL}/api/jobs/apply`, {
+    method: 'POST',
+    body: formData
   });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || errorData.error || 'Failed to submit application');
+  }
+
+  return await response.json();
 }
 
 // ========== TOAST ==========

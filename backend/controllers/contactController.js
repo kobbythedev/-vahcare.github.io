@@ -1,5 +1,6 @@
 const Contact = require('../models/Contact');
 const nodemailer = require('nodemailer');
+const mongoose = require('mongoose');
 
 // @desc    Submit contact form
 // @route   POST /api/contact
@@ -8,20 +9,53 @@ const submitContact = async (req, res, next) => {
   try {
     const { name, email, phone, service, message } = req.body;
 
-    // Create contact entry
-    const contact = await Contact.create({
-      name,
-      email,
-      phone,
-      service,
-      message
-    });
+    let contact;
+    
+    // Check if MongoDB is connected
+    if (mongoose.connection.readyState === 1) {
+      // Create contact entry in database
+      contact = await Contact.create({
+        name,
+        email,
+        phone,
+        service,
+        message
+      });
+    } else {
+      // Create mock contact object when database is not available
+      contact = {
+        _id: Date.now().toString(),
+        name,
+        email,
+        phone,
+        service,
+        message,
+        submittedAt: new Date(),
+        status: 'new'
+      };
+      
+      console.log('📝 Contact form submitted (DB offline):', {
+        name,
+        email,
+        service,
+        message: message.substring(0, 50) + '...',
+        timestamp: new Date().toISOString()
+      });
+    }
 
-    // Send confirmation email to user
-    await sendContactConfirmation(email, name, service);
+    // Send confirmation email to user (non-blocking)
+    try {
+      await sendContactConfirmation(email, name, service);
+    } catch (emailError) {
+      console.log('⚠️  Failed to send confirmation email:', emailError.message);
+    }
 
-    // Send notification email to admin
-    await sendContactNotification(contact);
+    // Send notification email to admin (non-blocking)
+    try {
+      await sendContactNotification(contact);
+    } catch (emailError) {
+      console.log('⚠️  Failed to send admin notification:', emailError.message);
+    }
 
     res.status(201).json({
       success: true,

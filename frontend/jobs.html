@@ -1,167 +1,222 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Healthcare Jobs Portal</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-  <link rel="stylesheet" href="./CSS/job.css"/>
-</head>
-<body>
-  <header class="header">
-    <div class="container">
-      <h1 class="logo">VAHCare<span>Jobs</span></h1>
-      <nav class="main-nav"></nav>
-    </div>
-  </header>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Healthcare Jobs Portal</title>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+        <link rel="stylesheet" href="./CSS/job.css" />
+    </head>
+    <body>
+        <header class="header">
+            <div class="container">
+                <h1 class="logo">VAHCare<span>Jobs</span></h1>
+                <nav class="main-nav"></nav>
+            </div>
+        </header>
 
-  <main class="container">
-    <section class="filters-section">
-      <h2>Find Your Perfect Healthcare Role</h2>
+        <main class="container">
+            <section class="filters-section">
+                <h2>Find Your Perfect Healthcare Role</h2>
 
-      <div class="filter-boxes">
-        <!-- Location Filter -->
-        <div class="filter-box">
-          <button class="filter-toggle" id="locationToggle">
-            <span>Select Location</span>
-            <i class="fas fa-chevron-down"></i>
-          </button>
-          <div class="dropdown-menu" id="locationDropdown">
-            <div class="dropdown-item" data-location="all">All Locations</div>
-            <div class="dropdown-item" data-location="england">England</div>
-            <div class="dropdown-item" data-location="wales">Wales</div>
-          </div>
+                <div class="filter-boxes">
+                    <!-- Location Filter -->
+                    <div class="filter-box">
+                        <button class="filter-toggle" id="locationToggle">
+                            <span>Select Location</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu" id="locationDropdown">
+                            <div class="dropdown-item" data-location="all">
+                                All Locations
+                            </div>
+                            <div class="dropdown-item" data-location="england">
+                                England
+                            </div>
+                            <div class="dropdown-item" data-location="wales">
+                                Wales
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Specialty Filter -->
+                    <div class="filter-box">
+                        <button class="filter-toggle" id="specialtyToggle">
+                            <span>Select Specialty</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu" id="specialtyDropdown">
+                            <div class="dropdown-item" data-specialty="all">
+                                All Specialties
+                            </div>
+                            <div
+                                class="dropdown-item"
+                                data-specialty="health-assistant"
+                            >
+                                Health Assistants
+                            </div>
+                            <div class="dropdown-item" data-specialty="nurse">
+                                Registered General & Mental Nurses
+                            </div>
+                            <div class="dropdown-item" data-specialty="kitchen">
+                                Kitchen Assistants
+                            </div>
+                            <div
+                                class="dropdown-item"
+                                data-specialty="housekeeping"
+                            >
+                                House Keepers
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="jobs-listings">
+                <div class="active-filters">
+                    <span id="activeLocation">All Locations</span>
+                    <span id="activeSpecialty">All Specialties</span>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <p>Loading job opportunities...</p>
+                </div>
+
+                <!-- Jobs will be loaded dynamically here -->
+                <div class="job-cards-horizontal" id="jobsContainer">
+                    <!-- Dynamic content will be inserted here -->
+                </div>
+
+                <!-- No Jobs Message -->
+                <div
+                    id="noJobsMessage"
+                    class="no-jobs-message"
+                    style="display: none"
+                >
+                    <i class="fas fa-search"></i>
+                    <h3>No jobs found</h3>
+                    <p>
+                        Try adjusting your filters or check back later for new
+                        opportunities.
+                    </p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Application Modal -->
+        <div class="modal" id="applicationModal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2 id="modalJobTitle">Application Form</h2>
+                <form id="jobApplicationForm">
+                    <input type="hidden" id="jobId" />
+
+                    <div class="form-group">
+                        <label for="applicantName">Full Name</label>
+                        <input type="text" id="applicantName" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="applicantEmail">Email Address</label>
+                        <input type="email" id="applicantEmail" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="applicantExperience"
+                            >Years of relevant experience</label
+                        >
+                        <select id="applicantExperience" required>
+                            <option value="">Select experience</option>
+                            <option value="0-1">0-1 years</option>
+                            <option value="1-3">1-3 years</option>
+                            <option value="3-5">3-5 years</option>
+                            <option value="5+">5+ years</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cvUpload">Upload CV (PDF or DOC)</label>
+                        <div class="file-upload-wrapper">
+                            <input
+                                type="file"
+                                id="cvUpload"
+                                accept=".pdf,.doc,.docx"
+                                required
+                            />
+                            <label for="cvUpload" class="file-upload-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span id="cvFileName">Choose file</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="applicantAvailability"
+                            >When can you start?</label
+                        >
+                        <select id="applicantAvailability" required>
+                            <option value="">Select availability</option>
+                            <option value="immediately">Immediately</option>
+                            <option value="1month">Within 1 month</option>
+                            <option value="3months">Within 3 months</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="applicantMessage"
+                            >Why are you interested in this position?
+                            (optional)</label
+                        >
+                        <textarea id="applicantMessage" rows="3"></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        <span class="submit-text">Submit Application</span>
+                        <span class="submit-spinner" style="display: none">
+                            <i class="fas fa-spinner fa-spin"></i> Submitting...
+                        </span>
+                    </button>
+                </form>
+            </div>
         </div>
 
-        <!-- Specialty Filter -->
-        <div class="filter-box">
-          <button class="filter-toggle" id="specialtyToggle">
-            <span>Select Specialty</span>
-            <i class="fas fa-chevron-down"></i>
-          </button>
-          <div class="dropdown-menu" id="specialtyDropdown">
-            <div class="dropdown-item" data-specialty="all">All Specialties</div>
-            <div class="dropdown-item" data-specialty="health-assistant">Health Assistants</div>
-            <div class="dropdown-item" data-specialty="nurse">Registered General & Mental Nurses</div>
-            <div class="dropdown-item" data-specialty="kitchen">Kitchen Assistants</div>
-            <div class="dropdown-item" data-specialty="housekeeping">House Keepers</div>
-          </div>
-        </div>
-      </div>
-    </section>
+        <!-- CMS Configuration -->
+        <script>
+            // TODO: For production, move these credentials to environment variables or secure config
+            // Current credentials are for development/testing only
+            window.CMS_CONFIG = {
+                SPACE_ID: "an5z1jbyxt43",
+                ACCESS_TOKEN: "ZKGyB6RWFaUfcU0AQYzW98zjHA0x9hbDDMg9H0WFMN4",
+                ENVIRONMENT: "master",
+            };
+        </script>
 
-    <section class="jobs-listings">
-      <div class="active-filters">
-        <span id="activeLocation">All Locations</span>
-        <span id="activeSpecialty">All Specialties</span>
-      </div>
+        <footer>
+            <div class="container">
+                <div class="logo">VAH<span>Care</span></div>
+                <p>
+                    "Transforming lives through compassionate care and unmatched
+                    recruitment expertise."
+                </p>
+                <p>&copy; 2025 VAH Care. All Rights Reserved.</p>
+                <p>Designed by Paragon Technology.</p>
+            </div>
+        </footer>
 
-      <!-- Loading State -->
-      <div id="loadingState" class="loading-container">
-        <div class="loading-spinner"></div>
-        <p>Loading job opportunities...</p>
-      </div>
+        <script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
+        <script>
+            window.CMS_CONFIG = {
+                SPACE_ID: "an5z1jbyxt43",
+                ACCESS_TOKEN: "ZKGyB6RWFaUfcU0AQYzW98zjHA0x9hbDDMg9H0WFMN4",
+                ENVIRONMENT: "master",
+            };
+        </script>
 
-      <!-- Jobs will be loaded dynamically here -->
-      <div class="job-cards-horizontal" id="jobsContainer">
-        <!-- Dynamic content will be inserted here -->
-      </div>
-
-      <!-- No Jobs Message -->
-      <div id="noJobsMessage" class="no-jobs-message" style="display: none;">
-        <i class="fas fa-search"></i>
-        <h3>No jobs found</h3>
-        <p>Try adjusting your filters or check back later for new opportunities.</p>
-      </div>
-    </section>
-  </main>
-
-  <!-- Application Modal -->
-  <div class="modal" id="applicationModal">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <h2 id="modalJobTitle">Application Form</h2>
-      <form id="jobApplicationForm">
-        <input type="hidden" id="jobId" />
-
-        <div class="form-group">
-          <label for="applicantName">Full Name</label>
-          <input type="text" id="applicantName" required />
-        </div>
-
-        <div class="form-group">
-          <label for="applicantEmail">Email Address</label>
-          <input type="email" id="applicantEmail" required />
-        </div>
-
-        <div class="form-group">
-          <label for="applicantExperience">Years of relevant experience</label>
-          <select id="applicantExperience" required>
-            <option value="">Select experience</option>
-            <option value="0-1">0-1 years</option>
-            <option value="1-3">1-3 years</option>
-            <option value="3-5">3-5 years</option>
-            <option value="5+">5+ years</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="cvUpload">Upload CV (PDF or DOC)</label>
-          <div class="file-upload-wrapper">
-            <input type="file" id="cvUpload" accept=".pdf,.doc,.docx" required />
-            <label for="cvUpload" class="file-upload-label">
-              <i class="fas fa-cloud-upload-alt"></i>
-              <span id="cvFileName">Choose file</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="applicantAvailability">When can you start?</label>
-          <select id="applicantAvailability" required>
-            <option value="">Select availability</option>
-            <option value="immediately">Immediately</option>
-            <option value="1month">Within 1 month</option>
-            <option value="3months">Within 3 months</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="applicantMessage">Why are you interested in this position? (optional)</label>
-          <textarea id="applicantMessage" rows="3"></textarea>
-        </div>
-
-        <button type="submit" class="submit-btn">
-          <span class="submit-text">Submit Application</span>
-          <span class="submit-spinner" style="display: none;">
-            <i class="fas fa-spinner fa-spin"></i> Submitting...
-          </span>
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- CMS Configuration -->
-  <script>
-    // TODO: For production, move these credentials to environment variables or secure config
-    // Current credentials are for development/testing only
-    window.CMS_CONFIG = {
-      SPACE_ID: 'an5z1jbyxt43',
-      ACCESS_TOKEN: 'ZKGyB6RWFaUfcU0AQYzW98zjHA0x9hbDDMg9H0WFMN4',
-      ENVIRONMENT: 'master'
-    };
-  </script>
-
-  <footer>
-    <div class="container">
-      <div class="logo">VAH<span>Care</span></div>
-      <p>"Transforming lives through compassionate care and unmatched recruitment expertise."</p>
-      <p>&copy; 2025 VAH Care. All Rights Reserved.</p>
-      <p>Designed by Paragon Technology.</p>
-    </div>
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
-  <script src="./JS/jobs.js"></script>
-</body>
+        <script src="./JS/jobs.js"></script>
+    </body>
 </html>

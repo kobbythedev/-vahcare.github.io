@@ -1,448 +1,763 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#2a7f62" />
+        <title>VAH Care - Exceptional Care & Trusted Recruitment</title>
+        <script src="JS/script.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="./CSS/globals.css" />
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#2a7f62">
-    <title>VAH Care - Exceptional Care & Trusted Recruitment</title>
-    <script src="js/script.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="./CSS/globals.css">
+    <body>
+        <!-- Navigation -->
+        <header
+            class="navbar"
+            style="
+                height: 120px;
+                width: 100vw;
+                z-index: 1000;
+                padding: 0 40px;
+                justify-content: center;
+                align-items: center;
+                display: flex;
+                position: fixed;
+                transition: background-color 0.3s ease;
+            "
+        >
+            <nav
+                style="
+                    padding: 0;
+                    margin: 0;
+                    position: relative;
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                "
+            >
+                <!--Logo-->
+                <span
+                    style="
+                        display: flex;
+                        justify-content: start;
+                        align-items: center;
+                        gap: 2%;
+                    "
+                >
+                    <img
+                        src="./assets/logo.svg"
+                        style="width: 10rem; height: auto; inset: 0"
+                    />
+                </span>
+                <!--Nav Links-->
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#recruitment">Recruitment</a></li>
+                    <li><a href="jobs.html">Jobs</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
 
-</head>
+        <!--Mobile Navigation-->
+        <header
+            class="mobile-header"
+            id="navbar"
+            style="
+                height: 120px;
+                width: 100vw;
+                z-index: 1000;
+                padding: 0 40px;
+                justify-content: center;
+                align-items: center;
+                display: none;
+                position: fixed;
+                transition: background-color 0.3s ease;
+            "
+        >
+            <nav
+                style="
+                    padding: 0;
+                    margin: 0;
+                    position: relative;
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                "
+            >
+                <!--Logo-->
+                <span
+                    style="
+                        display: flex;
+                        justify-content: start;
+                        align-items: center;
+                        gap: 2%;
+                    "
+                >
+                    <img
+                        src="./assets/logo.svg"
+                        style="width: 10rem; height: auto; inset: 0"
+                    />
+                </span>
+                <!--Hamburger Menu-->
+                <button
+                    class="hamburger-menu"
+                    style="
+                        background: none;
+                        border: none;
+                        cursor: pointer;
+                        font-size: 1.5rem;
+                        color: white;
+                    "
+                >
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </header>
 
-<body>
-
-    <!-- Navigation -->
-    <header
-        class="navbar"
-        style="height: 120px; width: 100vw; z-index: 1000; padding: 0 40px; justify-content: center; align-items: center; display: flex; position: fixed; transition: background-color 0.3s ease;">
-        <nav
-
-            style="padding: 0; margin: 0;  position: relative; width: 100%; display:  flex; justify-content: space-between; align-items: center;">
-            <!--Logo-->
-            <span style="display: flex; justify-content: start; align-items: center; gap: 2%;">
-                <img src="./assets/logo.svg" style="width: 10rem; height: auto; inset: 0;" />
-
-            </span>
-            <!--Nav Links-->
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#recruitment">Recruitment</a></li>
-                <li><a href="jobs.html">Jobs</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-
-
-        </nav>
-
-    </header>
-
-
-    <!--Mobile Navigation-->
-    <header class="mobile-header"
-        id="navbar"
-        style="height: 120px; width: 100vw; z-index: 1000; padding: 0 40px; justify-content: center; align-items: center; display: none; position: fixed; transition: background-color 0.3s ease;">
-        <nav
-
-            style="padding: 0; margin: 0;  position: relative; width: 100%; display:  flex; justify-content: space-between; align-items: center;">
-            <!--Logo-->
-            <span style="display: flex; justify-content: start; align-items: center; gap: 2%;">
-                <img src="./assets/logo.svg" style="width: 10rem; height: auto; inset: 0;" />
-            </span>
-            <!--Hamburger Menu-->
-            <button class="hamburger-menu" style="background: none; border: none; cursor: pointer; font-size: 1.5rem; color: white;">
-                <i class="fas fa-bars"></i>
-            </button>
-        </nav>
-    </header>
-
-    <!-- Mobile Sidebar -->
-    <div class="mobile-sidebar" style="position: fixed; top: 0; right: -300px; width: 300px; height: 100vh; background-color: rgb(0,0,0); z-index: 2000; transition: right 0.3s ease; box-shadow: -2px 0 10px rgba(0,0,0,0.1);">
-        <div style="padding: 20px;">
-            <button class="close-sidebar" style="background: none; border: none; cursor: pointer; font-size: 1.5rem; color: white; float: right; margin-bottom: 20px;">
-                <i class="fas fa-times"></i>
-            </button>
-            <div style="clear: both;"></div>
-            <ul class="mobile-nav-links" style="list-style: none; padding: 0; margin: 0;">
-                <li style="margin-bottom: 20px;"><a href="#home" style="color: white; text-decoration: none; font-size: 1.1rem; display: block; padding: 10px 0;">Home</a></li>
-                <li style="margin-bottom: 20px;"><a href="#services" style="color: white; text-decoration: none; font-size: 1.1rem; display: block; padding: 10px 0;">Services</a></li>
-                <li style="margin-bottom: 20px;"><a href="#about" style="color: white; text-decoration: none; font-size: 1.1rem; display: block; padding: 10px 0;">About</a></li>
-                <li style="margin-bottom: 20px;"><a href="#recruitment" style="color: white; text-decoration: none; font-size: 1.1rem; display: block; padding: 10px 0;">Recruitment</a></li>
-                <li style="margin-bottom: 20px;"><a href="jobs.html" style="color: white; text-decoration: none; font-size: 1.1rem; display: block; padding: 10px 0;">Jobs</a></li>
-                <li style="margin-bottom: 20px;"><a href="#contact" style="color: white; text-decoration: none; font-size: 1.1rem; display: block; padding: 10px 0;">Contact</a></li>
-            </ul>
+        <!-- Mobile Sidebar -->
+        <div
+            class="mobile-sidebar"
+            style="
+                position: fixed;
+                top: 0;
+                right: -300px;
+                width: 300px;
+                height: 100vh;
+                background-color: rgb(0, 0, 0);
+                z-index: 2000;
+                transition: right 0.3s ease;
+                box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            "
+        >
+            <div style="padding: 20px">
+                <button
+                    class="close-sidebar"
+                    style="
+                        background: none;
+                        border: none;
+                        cursor: pointer;
+                        font-size: 1.5rem;
+                        color: white;
+                        float: right;
+                        margin-bottom: 20px;
+                    "
+                >
+                    <i class="fas fa-times"></i>
+                </button>
+                <div style="clear: both"></div>
+                <ul
+                    class="mobile-nav-links"
+                    style="list-style: none; padding: 0; margin: 0"
+                >
+                    <li style="margin-bottom: 20px">
+                        <a
+                            href="#home"
+                            style="
+                                color: white;
+                                text-decoration: none;
+                                font-size: 1.1rem;
+                                display: block;
+                                padding: 10px 0;
+                            "
+                            >Home</a
+                        >
+                    </li>
+                    <li style="margin-bottom: 20px">
+                        <a
+                            href="#services"
+                            style="
+                                color: white;
+                                text-decoration: none;
+                                font-size: 1.1rem;
+                                display: block;
+                                padding: 10px 0;
+                            "
+                            >Services</a
+                        >
+                    </li>
+                    <li style="margin-bottom: 20px">
+                        <a
+                            href="#about"
+                            style="
+                                color: white;
+                                text-decoration: none;
+                                font-size: 1.1rem;
+                                display: block;
+                                padding: 10px 0;
+                            "
+                            >About</a
+                        >
+                    </li>
+                    <li style="margin-bottom: 20px">
+                        <a
+                            href="#recruitment"
+                            style="
+                                color: white;
+                                text-decoration: none;
+                                font-size: 1.1rem;
+                                display: block;
+                                padding: 10px 0;
+                            "
+                            >Recruitment</a
+                        >
+                    </li>
+                    <li style="margin-bottom: 20px">
+                        <a
+                            href="jobs.html"
+                            style="
+                                color: white;
+                                text-decoration: none;
+                                font-size: 1.1rem;
+                                display: block;
+                                padding: 10px 0;
+                            "
+                            >Jobs</a
+                        >
+                    </li>
+                    <li style="margin-bottom: 20px">
+                        <a
+                            href="#contact"
+                            style="
+                                color: white;
+                                text-decoration: none;
+                                font-size: 1.1rem;
+                                display: block;
+                                padding: 10px 0;
+                            "
+                            >Contact</a
+                        >
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
 
-    <!-- Mobile Sidebar Overlay -->
-    <div class="sidebar-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.5); z-index: 1500; display: none;"></div>
+        <!-- Mobile Sidebar Overlay -->
+        <div
+            class="sidebar-overlay"
+            style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 1500;
+                display: none;
+            "
+        ></div>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="container hero-content">
-            <h1>Exceptional Care. Trusted Recruitment. One Remarkable Partnership.</h1>
-            <p>We don't just provide healthcare services – we create caring communities where individuals thrive,
-                families find peace of mind, and healthcare professionals build meaningful careers.</p>
-            <a href="#contact" class="btn">Get Started</a>
-            <img src="assets/image1.png"
-                style="position: absolute; z-index: -5; object-position: top; object-fit: cover; height: 100dvh; width: 100vw; top: 0; left: 0;" />
-        </div>
-    </section>
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="container hero-content">
+                <h1>
+                    Exceptional Care. Trusted Recruitment. One Remarkable
+                    Partnership.
+                </h1>
+                <p>
+                    We don't just provide healthcare services – we create caring
+                    communities where individuals thrive, families find peace of
+                    mind, and healthcare professionals build meaningful careers.
+                </p>
+                <a href="#contact" class="btn">Get Started</a>
+                <img
+                    src="assets/image1.png"
+                    style="
+                        position: absolute;
+                        z-index: -5;
+                        object-position: top;
+                        object-fit: cover;
+                        height: 100dvh;
+                        width: 100vw;
+                        top: 0;
+                        left: 0;
+                    "
+                />
+            </div>
+        </section>
 
-    <!-- About Section -->
-    <section id="about" class="about">
-        <div class="container">
-            <h2>Welcome to VAH Care</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <p>We believe that care is more than a service—it's a calling. We deliver bespoke care solutions and
-                        state-of-the-art healthcare recruitment services that bring together empathy, precision and
-                        expertise. Our dual focus ensures that individuals receive the personalised attention they
-                        deserve, while healthcare facilities are staffed with professionals who drive excellence.</p>
+        <!-- About Section -->
+        <section id="about" class="about">
+            <div class="container">
+                <h2>Welcome to VAH Care</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>
+                            We believe that care is more than a service—it's a
+                            calling. We deliver bespoke care solutions and
+                            state-of-the-art healthcare recruitment services
+                            that bring together empathy, precision and
+                            expertise. Our dual focus ensures that individuals
+                            receive the personalised attention they deserve,
+                            while healthcare facilities are staffed with
+                            professionals who drive excellence.
+                        </p>
 
-                    <div class="promise-box">
-                        <h3>Our Promise:</h3>
+                        <div class="promise-box">
+                            <h3>Our Promise:</h3>
+                            <ul>
+                                <li>
+                                    <i class="fas fa-heart"></i>
+                                    <strong>Personalised Care:</strong> Every
+                                    client is unique; our care plans are
+                                    tailored to meet your personal and clinical
+                                    needs.
+                                </li>
+                                <li>
+                                    <i class="fas fa-star"></i>
+                                    <strong>Top Talent Recruitment:</strong> We
+                                    provide a robust recruitment process
+                                    ensuring only the most qualified candidates
+                                    are matched to your requirements.
+                                </li>
+                                <li>
+                                    <i class="fas fa-shield-alt"></i>
+                                    <strong>Innovation & Integrity:</strong>
+                                    Through advanced screening procedures and
+                                    continuous professional development, we
+                                    assure you uncompromised quality and
+                                    reliability.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <p>
+                            "Transforming lives through compassionate care and
+                            unmatched recruitment expertise."
+                        </p>
+                    </div>
+                    <div class="about-image">
+                        <img src="./assets/image2.jpg" alt="logo" />
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="services">
+            <div class="container">
+                <h2>Our Comprehensive Solutions</h2>
+                <h3>Care Services That Empower Lives</h3>
+                <p>
+                    Our care services are designed with the utmost respect for
+                    your dignity and independence. We create a nurturing
+                    environment that not only meets practical needs but also
+                    enriches the spirit.
+                </p>
+
+                <div class="services-grid">
+                    <div class="service-card">
+                        <i class="fas fa-home"></i>
+                        <h4>Personal & Home Care</h4>
                         <ul>
-                            <li><i class="fas fa-heart"></i> <strong>Personalised Care:</strong> Every client is unique;
-                                our care plans are tailored to meet your personal and clinical needs.</li>
-                            <li><i class="fas fa-star"></i> <strong>Top Talent Recruitment:</strong> We provide a robust
-                                recruitment process ensuring only the most qualified candidates are matched to your
-                                requirements.</li>
-                            <li><i class="fas fa-shield-alt"></i> <strong>Innovation & Integrity:</strong> Through
-                                advanced screening procedures and continuous professional development, we assure you
-                                uncompromised quality and reliability.</li>
+                            <li>Personal Assistance with daily tasks</li>
+                            <li>Medication & Health Management</li>
+                            <li>Companionship & Emotional Support</li>
                         </ul>
                     </div>
 
-                    <p>"Transforming lives through compassionate care and unmatched recruitment expertise."</p>
-                </div>
-                <div class="about-image">
-                    <img src="./assets/image2.jpg" alt="logo">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Services Section -->
-    <section id="services" class="services">
-        <div class="container">
-            <h2>Our Comprehensive Solutions</h2>
-            <h3>Care Services That Empower Lives</h3>
-            <p>Our care services are designed with the utmost respect for your dignity and independence. We create a
-                nurturing environment that not only meets practical needs but also enriches the spirit.</p>
-
-            <div class="services-grid">
-                <div class="service-card">
-                    <i class="fas fa-home"></i>
-                    <h4>Personal & Home Care</h4>
-                    <ul>
-                        <li>Personal Assistance with daily tasks</li>
-                        <li>Medication & Health Management</li>
-                        <li>Companionship & Emotional Support</li>
-                    </ul>
-                </div>
-
-                <div class="service-card">
-                    <i class="fas fa-brain"></i>
-                    <h4>Specialised Care Programs</h4>
-                    <ul>
-                        <li>Dementia and Alzheimer's Care</li>
-                        <li>Post-Operative and Rehabilitation Support</li>
-                        <li>Disability and Chronic Condition Support</li>
-                    </ul>
-                </div>
-
-                <div class="service-card">
-                    <i class="fas fa-clock"></i>
-                    <h4>Enhanced Living Solutions</h4>
-                    <ul>
-                        <li>24/7 On-Call Support</li>
-                        <li>Flexible Care Plans</li>
-                        <li>Tailored Support Services</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Recruitment Section -->
-    <section id="recruitment" class="recruitment">
-        <div class="container">
-            <h2>Healthcare Recruitment</h2>
-            <h3>Connecting Excellence with Opportunity</h3>
-            <p>Our healthcare recruitment division is founded on the principle that every care facility, hospital or
-                home deserves access to the very best professionals. Through rigorous selection, background verification
-                and continuous training, we ensure that your workforce is both skilled and compassionate.</p>
-
-            <div class="staffing-categories">
-                <div class="category-card">
-                    <i class="fas fa-hands-helping"></i>
-                    <h4>Carers</h4>
-                    <p><strong>Role Overview:</strong> Dedicated professionals providing personalized support to enhance
-                        quality of life.</p>
-                    <p><strong>What They Do:</strong> Assist with daily living activities, support mobility and provide
-                        emotional support.</p>
-                </div>
-
-                <div class="category-card">
-                    <i class="fas fa-user-nurse"></i>
-                    <h4>Registered Nurses</h4>
-                    <p><strong>Role Overview:</strong> Experienced nursing professionals critical in delivering
-                        healthcare expertise.</p>
-                    <p><strong>What They Do:</strong> Manage clinical responsibilities and patient monitoring.</p>
-                </div>
-
-                <div class="category-card">
-                    <i class="fas fa-utensils"></i>
-                    <h4>Kitchen Staff</h4>
-                    <p><strong>Role Overview:</strong> Essential in ensuring nutritional needs are met.</p>
-                    <p><strong>What They Do:</strong> Meal preparation and food safety protocols.</p>
-                </div>
-
-                <div class="category-card">
-                    <i class="fas fa-broom"></i>
-                    <h4>Housekeepers</h4>
-                    <p><strong>Role Overview:</strong> Maintain hygiene and order within care facilities.</p>
-                    <p><strong>What They Do:</strong> Deep cleaning and sanitation of living spaces.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
-    <!-- Contact Section -->
-    <section id="contact" class="contact">
-        <div class="container">
-            <h2>Let's Start a Conversation</h2>
-            <p>Whether you're seeking a caring hand at home or a dynamic professional to join your healthcare facility,
-                our team is ready to help.</p>
-
-            <div class="contact-container">
-                <div class="contact-info">
-                    <h3>Get in Touch</h3>
-                    <div class="info-item">
-                        <i class="fas fa-phone"></i>
-                        <span>Phone: [02046176170]</span>
+                    <div class="service-card">
+                        <i class="fas fa-brain"></i>
+                        <h4>Specialised Care Programs</h4>
+                        <ul>
+                            <li>Dementia and Alzheimer's Care</li>
+                            <li>Post-Operative and Rehabilitation Support</li>
+                            <li>Disability and Chronic Condition Support</li>
+                        </ul>
                     </div>
-                    <div class="info-item">
-                        <i class="fas fa-envelope"></i>
-                        <span>Email: info@vahcare.co.uk</span>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-envelope"></i>
-                        <span>Candidate Email: jobs@vahcare.co.uk</span>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>Office Address: 124 City Road, London, EC1V 2NX</span>
+
+                    <div class="service-card">
+                        <i class="fas fa-clock"></i>
+                        <h4>Enhanced Living Solutions</h4>
+                        <ul>
+                            <li>24/7 On-Call Support</li>
+                            <li>Flexible Care Plans</li>
+                            <li>Tailored Support Services</li>
+                        </ul>
                     </div>
                 </div>
+            </div>
+        </section>
 
-                <div class="contact-form">
-                    <h3>Make the Connection</h3>
-                    <form>
-                        <div class="form-group">
-                            <label for="name">Your Name</label>
-                            <input type="text" id="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Your Email</label>
-                            <input type="email" id="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Your Phone Number</label>
-                            <input type="tel" id="phone">
-                        </div>
-                        <div class="form-group">
-                            <label for="service">Select a Service</label>
-                            <select id="service" required>
-                                <option value="" disabled selected>-- Please select --</option>
-                                <option value="home_care">Home Care</option>
-                                <option value="specialized_service">Specialized Service</option>
-                                <option value="staff_recruitment">Staff Recruitment</option>
-                                <option value="other_enquiry">Other Enquiry</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="message">Your Message</label>
-                            <textarea id="message" rows="5" required></textarea>
-                        </div>
-                        <button type="submit" class="btn">Send Message</button>
-                    </form>
+        <!-- Recruitment Section -->
+        <section id="recruitment" class="recruitment">
+            <div class="container">
+                <h2>Healthcare Recruitment</h2>
+                <h3>Connecting Excellence with Opportunity</h3>
+                <p>
+                    Our healthcare recruitment division is founded on the
+                    principle that every care facility, hospital or home
+                    deserves access to the very best professionals. Through
+                    rigorous selection, background verification and continuous
+                    training, we ensure that your workforce is both skilled and
+                    compassionate.
+                </p>
+
+                <div class="staffing-categories">
+                    <div class="category-card">
+                        <i class="fas fa-hands-helping"></i>
+                        <h4>Carers</h4>
+                        <p>
+                            <strong>Role Overview:</strong> Dedicated
+                            professionals providing personalized support to
+                            enhance quality of life.
+                        </p>
+                        <p>
+                            <strong>What They Do:</strong> Assist with daily
+                            living activities, support mobility and provide
+                            emotional support.
+                        </p>
+                    </div>
+
+                    <div class="category-card">
+                        <i class="fas fa-user-nurse"></i>
+                        <h4>Registered Nurses</h4>
+                        <p>
+                            <strong>Role Overview:</strong> Experienced nursing
+                            professionals critical in delivering healthcare
+                            expertise.
+                        </p>
+                        <p>
+                            <strong>What They Do:</strong> Manage clinical
+                            responsibilities and patient monitoring.
+                        </p>
+                    </div>
+
+                    <div class="category-card">
+                        <i class="fas fa-utensils"></i>
+                        <h4>Kitchen Staff</h4>
+                        <p>
+                            <strong>Role Overview:</strong> Essential in
+                            ensuring nutritional needs are met.
+                        </p>
+                        <p>
+                            <strong>What They Do:</strong> Meal preparation and
+                            food safety protocols.
+                        </p>
+                    </div>
+
+                    <div class="category-card">
+                        <i class="fas fa-broom"></i>
+                        <h4>Housekeepers</h4>
+                        <p>
+                            <strong>Role Overview:</strong> Maintain hygiene and
+                            order within care facilities.
+                        </p>
+                        <p>
+                            <strong>What They Do:</strong> Deep cleaning and
+                            sanitation of living spaces.
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="logo">VAH<span>Care</span></div>
-            <p>"Transforming lives through compassionate care and unmatched recruitment expertise."</p>
+        <!-- Contact Section -->
+        <section id="contact" class="contact">
+            <div class="container">
+                <h2>Let's Start a Conversation</h2>
+                <p>
+                    Whether you're seeking a caring hand at home or a dynamic
+                    professional to join your healthcare facility, our team is
+                    ready to help.
+                </p>
 
-            <div class="social-links">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-linkedin"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
+                <div class="contact-container">
+                    <div class="contact-info">
+                        <h3>Get in Touch</h3>
+                        <div class="info-item">
+                            <i class="fas fa-phone"></i>
+                            <span>Phone: [02046176170]</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>Email: info@vahcare.co.uk</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>Candidate Email: jobs@vahcare.co.uk</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span
+                                >Office Address: 124 City Road, London, EC1V
+                                2NX</span
+                            >
+                        </div>
+                    </div>
+
+                    <div class="contact-form">
+                        <h3>Make the Connection</h3>
+                        <form>
+                            <div class="form-group">
+                                <label for="name">Your Name</label>
+                                <input type="text" id="name" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Your Email</label>
+                                <input type="email" id="email" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Your Phone Number</label>
+                                <input type="tel" id="phone" />
+                            </div>
+                            <div class="form-group">
+                                <label for="service">Select a Service</label>
+                                <select id="service" required>
+                                    <option value="" disabled selected>
+                                        -- Please select --
+                                    </option>
+                                    <option value="home_care">Home Care</option>
+                                    <option value="specialized_service">
+                                        Specialized Service
+                                    </option>
+                                    <option value="staff_recruitment">
+                                        Staff Recruitment
+                                    </option>
+                                    <option value="other_enquiry">
+                                        Other Enquiry
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Your Message</label>
+                                <textarea
+                                    id="message"
+                                    rows="5"
+                                    required
+                                ></textarea>
+                            </div>
+                            <button type="submit" class="btn">
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
+        </section>
 
-            <p>&copy; 2025 VAH Care. All Rights Reserved.</p>
-            <p>Designed by Paragon Technology.</p>
-        </div>
-    </footer>
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="logo">VAH<span>Care</span></div>
+                <p>
+                    "Transforming lives through compassionate care and unmatched
+                    recruitment expertise."
+                </p>
 
-    <script>
-    // Navigation scroll effect
-    window.addEventListener('scroll', function () {
-        const navbar = document.querySelector('.navbar');
-        const mobileHeader = document.querySelector('.mobile-header');
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
 
-        if (window.scrollY > 50) {
-          if (navbar) {
-            navbar.classList.add("scrolled");
-          }
-          if (mobileHeader) {
-            mobileHeader.classList.add("scrolled");
-          }
-          console.log("scrolled");
-        } else {
-          if (navbar) {
-            navbar.classList.remove("scrolled");
-          }
-          if (mobileHeader) {
-            mobileHeader.classList.remove("scrolled");
-          }
-          console.log("Waiting....");
-        }
-    });
+                <p>&copy; 2025 VAH Care. All Rights Reserved.</p>
+                <p>Designed by Paragon Technology.</p>
+            </div>
+        </footer>
 
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
+        <script>
+            // Navigation scroll effect
+            window.addEventListener("scroll", function () {
+                const navbar = document.querySelector(".navbar");
+                const mobileHeader = document.querySelector(".mobile-header");
 
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
+                if (window.scrollY > 50) {
+                    if (navbar) {
+                        navbar.classList.add("scrolled");
+                    }
+                    if (mobileHeader) {
+                        mobileHeader.classList.add("scrolled");
+                    }
+                    console.log("scrolled");
+                } else {
+                    if (navbar) {
+                        navbar.classList.remove("scrolled");
+                    }
+                    if (mobileHeader) {
+                        mobileHeader.classList.remove("scrolled");
+                    }
+                    console.log("Waiting....");
+                }
+            });
 
-                window.scrollTo({
-                    top: targetElement.offsetTop - 80,
-                    behavior: 'smooth'
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+                anchor.addEventListener("click", function (e) {
+                    e.preventDefault();
+
+                    const targetId = this.getAttribute("href");
+                    const targetElement = document.querySelector(targetId);
+
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: "smooth",
+                    });
                 });
             });
-        });
 
-        // Mobile navigation functionality
-        const hamburgerMenu = document.querySelector('.hamburger-menu');
-        const mobileSidebar = document.querySelector('.mobile-sidebar');
-        const closeSidebar = document.querySelector('.close-sidebar');
-        const sidebarOverlay = document.querySelector('.sidebar-overlay');
-        const mobileNavLinks = document.querySelectorAll('.mobile-nav-links a');
+            // Mobile navigation functionality
+            const hamburgerMenu = document.querySelector(".hamburger-menu");
+            const mobileSidebar = document.querySelector(".mobile-sidebar");
+            const closeSidebar = document.querySelector(".close-sidebar");
+            const sidebarOverlay = document.querySelector(".sidebar-overlay");
+            const mobileNavLinks = document.querySelectorAll(
+                ".mobile-nav-links a",
+            );
 
-        // Open sidebar
-        if (hamburgerMenu) {
-            hamburgerMenu.addEventListener('click', function() {
-                mobileSidebar.style.right = '0';
-                sidebarOverlay.style.display = 'block';
-            });
-        }
-
-        // Close sidebar
-        function closeMobileSidebar() {
-            mobileSidebar.style.right = '-300px';
-            sidebarOverlay.style.display = 'none';
-        }
-
-        if (closeSidebar) {
-            closeSidebar.addEventListener('click', closeMobileSidebar);
-        }
-
-        if (sidebarOverlay) {
-            sidebarOverlay.addEventListener('click', closeMobileSidebar);
-        }
-
-        // Close sidebar when clicking nav links
-        mobileNavLinks.forEach(link => {
-            link.addEventListener('click', closeMobileSidebar);
-        });
-
-        // Show/hide mobile navigation based on screen size
-        function handleResponsiveNavigation() {
-            const mobileHeader = document.querySelector('.mobile-header');
-            const desktopHeader = document.querySelector('header:not(.mobile-header)');
-
-            if (window.innerWidth <= 768) {
-                if (mobileHeader) mobileHeader.style.display = 'flex';
-                if (desktopHeader) desktopHeader.style.display = 'none';
-            } else {
-                if (mobileHeader) mobileHeader.style.display = 'none';
-                if (desktopHeader) desktopHeader.style.display = 'flex';
-                closeMobileSidebar(); // Close sidebar if open when switching to desktop
+            // Open sidebar
+            if (hamburgerMenu) {
+                hamburgerMenu.addEventListener("click", function () {
+                    mobileSidebar.style.right = "0";
+                    sidebarOverlay.style.display = "block";
+                });
             }
-        }
 
-        // Initial check and event listener for window resize
-        handleResponsiveNavigation();
-        window.addEventListener('resize', handleResponsiveNavigation);
+            // Close sidebar
+            function closeMobileSidebar() {
+                mobileSidebar.style.right = "-300px";
+                sidebarOverlay.style.display = "none";
+            }
 
-        // Form submission
-        const form = document.querySelector('form');
-        if (form) {
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                // Create and show custom toast
-                const toast = document.createElement('div');
-                toast.textContent = 'Thank you for your message! We will contact you soon.';
-                toast.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    background-color: #2a7f62;
-                    color: white;
-                    padding: 15px 20px;
-                    border-radius: 5px;
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                    z-index: 1000;
-                    font-family: 'Poppins', sans-serif;
-                    font-size: 14px;
-                    opacity: 0;
-                    transform: translateX(100%);
-                    transition: all 0.3s ease;
-                `;
-                document.body.appendChild(toast);
+            if (closeSidebar) {
+                closeSidebar.addEventListener("click", closeMobileSidebar);
+            }
 
-                // Animate in
-                setTimeout(() => {
-                    toast.style.opacity = '1';
-                    toast.style.transform = 'translateX(0)';
-                }, 10);
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener("click", closeMobileSidebar);
+            }
 
-                // Remove after 4 seconds
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translateX(100%)';
-                    setTimeout(() => {
-                        document.body.removeChild(toast);
-                    }, 300);
-                }, 4000);
-                form.reset();
+            // Close sidebar when clicking nav links
+            mobileNavLinks.forEach((link) => {
+                link.addEventListener("click", closeMobileSidebar);
             });
-        }
 
-    </script>
-    <script src="mobile.js"></script>
+            // Show/hide mobile navigation based on screen size
+            function handleResponsiveNavigation() {
+                const mobileHeader = document.querySelector(".mobile-header");
+                const desktopHeader = document.querySelector(
+                    "header:not(.mobile-header)",
+                );
 
-    <script src="script.js"></script>
+                if (window.innerWidth <= 768) {
+                    if (mobileHeader) mobileHeader.style.display = "flex";
+                    if (desktopHeader) desktopHeader.style.display = "none";
+                } else {
+                    if (mobileHeader) mobileHeader.style.display = "none";
+                    if (desktopHeader) desktopHeader.style.display = "flex";
+                    closeMobileSidebar(); // Close sidebar if open when switching to desktop
+                }
+            }
 
-</body>
+            // Initial check and event listener for window resize
+            handleResponsiveNavigation();
+            window.addEventListener("resize", handleResponsiveNavigation);
+        </script>
+        <script src="JS/script.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const contactForm = document.querySelector("form");
 
+                contactForm.addEventListener("submit", async function (e) {
+                    e.preventDefault();
+
+                    const name = document.getElementById("name").value.trim();
+                    const email = document.getElementById("email").value.trim();
+                    const phone = document.getElementById("phone").value.trim();
+                    const service = document.getElementById("service").value;
+                    const message = document
+                        .getElementById("message")
+                        .value.trim();
+
+                    if (!name || !email || !service || !message) {
+                        showToast(
+                            "Please fill in all required fields.",
+                            "error",
+                        );
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(
+                            window.location.hostname.includes("localhost") 
+                                ? "http://localhost:5000/api/contact"
+                                : "https://your-backend-domain.com/api/contact",
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({
+                                    fullName: name,
+                                    email,
+                                    phone,
+                                    service,
+                                    message,
+                                }),
+                            },
+                        );
+
+                        const result = await response.json();
+
+                        if (!response.ok) {
+                            throw new Error(
+                                result.error || "Something went wrong",
+                            );
+                        }
+
+                        showToast("Message sent successfully!", "success");
+                        contactForm.reset();
+                    } catch (error) {
+                        console.error("Contact form error:", error);
+                        showToast(
+                            "Failed to send message. Please try again.",
+                            "error",
+                        );
+                    }
+                });
+
+                function showToast(message, type = "success") {
+                    const toast = document.createElement("div");
+                    toast.textContent = message;
+                    toast.className = `toast-message ${type}`;
+                    toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background-color: ${type === "error" ? "#d9534f" : "#2a7f62"};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 4px;
+                z-index: 9999;
+                font-size: 14px;
+                font-family: Poppins, sans-serif;
+                opacity: 0;
+                transition: all 0.3s ease;
+              `;
+
+                    document.body.appendChild(toast);
+                    setTimeout(() => (toast.style.opacity = "1"), 100);
+                    setTimeout(() => {
+                        toast.style.opacity = "0";
+                        setTimeout(() => toast.remove(), 300);
+                    }, 4000);
+                }
+            });
+        </script>
+    </body>
 </html>

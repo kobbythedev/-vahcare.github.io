@@ -1,131 +1,100 @@
-
 const SPACE_ID = window.CMS_CONFIG.SPACE_ID;
 const ACCESS_TOKEN = window.CMS_CONFIG.ACCESS_TOKEN;
-const ENVIRONMENT = window.CMS_CONFIG.ENVIRONMENT || 'master';
+const ENVIRONMENT = window.CMS_CONFIG.ENVIRONMENT || "master";
 
-// Initialize Contentful client only if credentials are available
 let client = null;
+let currentJobId = null;
+
 if (SPACE_ID && ACCESS_TOKEN) {
   client = contentful.createClient({
     space: SPACE_ID,
     accessToken: ACCESS_TOKEN,
-    environment: ENVIRONMENT
+    environment: ENVIRONMENT,
   });
 }
 
-let currentJobId = null; // Track job being applied to
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-  ? 'http://localhost:5000' 
-  : '';
-
-// ========== LOAD JOBS FROM CMS ==========
-async function loadJobsFromCMS() {
+// ========== LOAD JOBS ==========
+const loadJobsFromCMS = async () => {
   try {
-    if (!client) {
-      throw new Error("CMS credentials not configured");
-    }
+    if (!client) throw new Error("CMS credentials missing");
 
-    const response = await client.getEntries({ content_type: 'job' });
-    const items = response.items;
-
-    if (!Array.isArray(items) || items.length === 0) {
-      throw new Error("No items returned from CMS.");
-    }
+    const { items } = await client.getEntries({ content_type: "job" });
+    if (!Array.isArray(items) || items.length === 0)
+      throw new Error("No jobs in CMS");
 
     const jobs = items
-      .map(item => {
+      .map((item) => {
         const fields = item.fields || {};
-        const title = fields.title || "Untitled";
-        const description = fields.description || "No description";
-        const salary = fields.salary || "N/A";
-        const posted = fields.datePosted || "Recently Posted";
-        const type = fields.type || "Full-Time";
-
-        let location = "unknown";
-        if (typeof fields.location === "string") {
-          location = fields.location.toLowerCase();
-        } else if (fields.location?.fields?.name) {
-          location = fields.location.fields.name.toLowerCase();
-        }
-
-        let specialty = "unspecified";
-        if (typeof fields.specialty === "string") {
-          specialty = fields.specialty.toLowerCase();
-        } else if (fields.specialty?.fields?.name) {
-          specialty = fields.specialty.fields.name.toLowerCase();
-        }
-
-        const requirements = Array.isArray(fields.requirements)
-          ? fields.requirements.map(req => (typeof req === 'string' ? req : ''))
-          : [];
 
         return {
           id: item.sys.id,
-          title,
-          location,
-          specialty,
-          description,
-          salary,
-          type,
-          posted,
-          requirements
+          title: fields.title || "Untitled",
+          location:
+            typeof fields.location === "string"
+              ? fields.location.toLowerCase()
+              : fields.location?.fields?.name?.toLowerCase() || "unknown",
+          specialty:
+            typeof fields.specialty === "string"
+              ? fields.specialty.toLowerCase()
+              : fields.specialty?.fields?.name?.toLowerCase() || "unspecified",
+          description: fields.description || "No description provided.",
+          salary: fields.salary || "N/A",
+          posted: fields.datePosted || "Recently Posted",
+          type: fields.type || "Full-Time",
+          requirements: Array.isArray(fields.requirements)
+            ? fields.requirements.map((r) => r || "")
+            : [],
         };
       })
       .filter(Boolean);
 
-    if (jobs.length === 0) throw new Error("No valid jobs returned from CMS.");
-    renderJobs(jobs);
-  } catch (error) {
-    console.error('Error loading jobs from CMS:', error);
-    useMockJobs(error);
-  }
-}
+    if (!jobs.length) throw new Error("No valid jobs");
 
-// ========== FALLBACK TO MOCK JOBS ==========
-function useMockJobs(error) {
-  console.warn("Falling back to mock jobs due to:", error.message);
-  
+    renderJobs(jobs);
+  } catch (err) {
+    console.error("CMS Error:", err);
+    useMockJobs(err);
+  }
+};
+
+// ========== MOCK JOBS ==========
+const useMockJobs = (err) => {
+  console.warn("Using mock jobs due to:", err.message);
+
   const mockJobs = [
     {
       id: "mock-1",
       title: "Registered Nurse - Care Home",
       location: "england",
       specialty: "nurse",
-      description: "We are seeking a compassionate and skilled Registered Nurse to join our team at a well-established care home in England.",
+      description: "Join our care home as a Registered Nurse.",
       salary: "30,000 - 35,000",
       type: "Full-Time",
       posted: "Recently Posted",
-      requirements: ["Valid nursing qualification", "Minimum 2 years experience", "Excellent communication skills"]
+      requirements: [
+        "Nursing qualification",
+        "2+ yrs exp",
+        "Strong communication",
+      ],
     },
     {
       id: "mock-2",
-      title: "Health Care Assistant - Dementia Care",
+      title: "Kitchen Assistant",
       location: "wales",
-      specialty: "health-assistant",
-      description: "Join our dedicated team as a Health Care Assistant specializing in dementia care.",
-      salary: "22,000 - 25,000",
-      type: "Full-Time",
-      posted: "Recently Posted",
-      requirements: ["Care certificate or equivalent", "Experience in dementia care preferred", "Compassionate nature"]
-    },
-    {
-      id: "mock-3",
-      title: "Kitchen Assistant - Nutritional Care",
-      location: "england",
       specialty: "kitchen",
-      description: "We are looking for a reliable Kitchen Assistant to join our nutrition team.",
+      description: "Assist in kitchen and nutrition tasks.",
       salary: "20,000 - 23,000",
       type: "Full-Time",
       posted: "Recently Posted",
-      requirements: ["Food hygiene certificate", "Team player", "Attention to detail"]
-    }
+      requirements: ["Food hygiene", "Attention to detail"],
+    },
   ];
-  
-  renderJobs(mockJobs);
-}
 
-// ========== RENDER JOBS ==========
-function renderJobs(jobs) {
+  renderJobs(mockJobs);
+};
+
+// ========== RENDER ==========
+const renderJobs = (jobs) => {
   const container = document.getElementById("jobsContainer");
   container.innerHTML = "";
 
@@ -134,7 +103,7 @@ function renderJobs(jobs) {
     return;
   }
 
-  jobs.forEach(job => {
+  jobs.forEach((job) => {
     const jobCard = document.createElement("div");
     jobCard.className = "job-card";
     jobCard.dataset.location = job.location;
@@ -151,15 +120,9 @@ function renderJobs(jobs) {
           <span><i class="fas fa-money-bill"></i> £${job.salary}</span>
         </div>
         <p class="job-description">${job.description}</p>
-        ${job.requirements.length > 0 ? `
-          <ul class="job-requirements">
-            ${job.requirements.map(req => `<li>${req}</li>`).join('')}
-          </ul>` : ''}
+        ${job.requirements.length ? `<ul class="job-requirements">${job.requirements.map((r) => `<li>${r}</li>`).join("")}</ul>` : ""}
       </div>
-
-      <button class="apply-btn" data-job-id="${job.id}" data-job-title="${job.title}">
-        Apply Now
-      </button>
+      <button class="apply-btn" data-job-id="${job.id}" data-job-title="${job.title}">Apply Now</button>
     `;
 
     container.appendChild(jobCard);
@@ -168,198 +131,102 @@ function renderJobs(jobs) {
   document.getElementById("loadingState").style.display = "none";
   document.getElementById("noJobsMessage").style.display = "none";
 
-  attachModalEvents(); // attach modal triggers
-}
+  attachModalEvents();
+};
 
-// ========== ATTACH MODAL EVENTS ==========
-function attachModalEvents() {
-  const buttons = document.querySelectorAll(".apply-btn");
-  buttons.forEach(btn => {
+// ========== EVENTS ==========
+const attachModalEvents = () => {
+  document.querySelectorAll(".apply-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const jobTitle = btn.getAttribute("data-job-title");
-      const jobId = btn.getAttribute("data-job-id");
-      currentJobId = jobId;
-      openModal(jobTitle);
+      currentJobId = btn.dataset.jobId;
+      document.getElementById("modalJobTitle").textContent =
+        btn.dataset.jobTitle;
+      document.getElementById("applicationModal").classList.add("show");
+      document.body.style.overflow = "hidden";
     });
   });
-}
+};
 
-function openModal(title) {
-  const modal = document.getElementById('applicationModal');
-  document.getElementById('modalJobTitle').textContent = title;
-  modal.classList.add('show');
-  document.body.style.overflow = 'hidden';
-}
-
-// ========== CLOSE MODAL ==========
-const modal = document.getElementById('applicationModal');
-document.querySelector('.close-modal').addEventListener('click', () => {
-  modal.classList.remove('show');
-  document.body.style.overflow = 'auto';
+document.querySelector(".close-modal").addEventListener("click", () => {
+  document.getElementById("applicationModal").classList.remove("show");
+  document.body.style.overflow = "auto";
 });
-window.addEventListener('click', e => {
-  if (e.target === modal) {
-    modal.classList.remove('show');
-    document.body.style.overflow = 'auto';
+
+window.addEventListener("click", (e) => {
+  if (e.target === document.getElementById("applicationModal")) {
+    document.getElementById("applicationModal").classList.remove("show");
+    document.body.style.overflow = "auto";
   }
 });
 
-// ========== FILTER DROPDOWNS ==========
-document.querySelectorAll('.filter-toggle').forEach(button => {
-  button.addEventListener('click', () => {
-    const dropdown = button.nextElementSibling;
-    document.querySelectorAll('.dropdown-menu').forEach(menu => {
-      if (menu !== dropdown) menu.classList.remove('show');
+// ========== FILTERS ==========
+document.querySelectorAll(".filter-toggle").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const dropdown = btn.nextElementSibling;
+    document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+      if (menu !== dropdown) menu.classList.remove("show");
     });
-    dropdown.classList.toggle('show');
+    dropdown.classList.toggle("show");
   });
 });
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.filter-box')) {
-    document.querySelectorAll('.dropdown-menu').forEach(menu => {
-      menu.classList.remove('show');
-    });
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".filter-box")) {
+    document
+      .querySelectorAll(".dropdown-menu")
+      .forEach((menu) => menu.classList.remove("show"));
   }
 });
 
-// ========== ACTIVE FILTER DISPLAY ==========
-document.querySelectorAll('#locationDropdown .dropdown-item').forEach(item => {
-  item.addEventListener('click', () => {
-    document.getElementById('activeLocation').textContent = item.textContent;
-    document.getElementById('locationToggle').querySelector('span').textContent = item.textContent;
-    document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('show'));
-    filterJobs();
-  });
+["location", "specialty"].forEach((type) => {
+  document
+    .querySelectorAll(`#${type}Dropdown .dropdown-item`)
+    .forEach((item) => {
+      item.addEventListener("click", () => {
+        document.getElementById(`active${capitalize(type)}`).textContent =
+          item.textContent;
+        document
+          .getElementById(`${type}Toggle`)
+          .querySelector("span").textContent = item.textContent;
+        document
+          .querySelectorAll(".dropdown-menu")
+          .forEach((menu) => menu.classList.remove("show"));
+        filterJobs();
+      });
+    });
 });
 
-document.querySelectorAll('#specialtyDropdown .dropdown-item').forEach(item => {
-  item.addEventListener('click', () => {
-    document.getElementById('activeSpecialty').textContent = item.textContent;
-    document.getElementById('specialtyToggle').querySelector('span').textContent = item.textContent;
-    document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('show'));
-    filterJobs();
-  });
-});
-
-// ========== FILTER JOBS ==========
-function filterJobs() {
-  const selectedLocation = document.getElementById('activeLocation').textContent.toLowerCase();
-  const selectedSpecialty = document.getElementById('activeSpecialty').textContent.toLowerCase();
-  const cards = document.querySelectorAll('.job-card');
+const filterJobs = () => {
+  const selectedLocation = document
+    .getElementById("activeLocation")
+    .textContent.toLowerCase();
+  const selectedSpecialty = document
+    .getElementById("activeSpecialty")
+    .textContent.toLowerCase();
+  const cards = document.querySelectorAll(".job-card");
   let visibleCount = 0;
 
-  cards.forEach(card => {
-    const cardLocation = card.dataset.location;
-    const cardSpecialty = card.dataset.specialty;
-    const matchesLocation = selectedLocation === 'all locations' || cardLocation.includes(selectedLocation);
-    const matchesSpecialty = selectedSpecialty === 'all specialties' || cardSpecialty.includes(selectedSpecialty);
+  cards.forEach((card) => {
+    const matchLocation =
+      selectedLocation === "all locations" ||
+      card.dataset.location.includes(selectedLocation);
+    const matchSpecialty =
+      selectedSpecialty === "all specialties" ||
+      card.dataset.specialty.includes(selectedSpecialty);
+    const show = matchLocation && matchSpecialty;
 
-    if (matchesLocation && matchesSpecialty) {
-      card.style.display = 'flex';
-      visibleCount++;
-    } else {
-      card.style.display = 'none';
-    }
+    card.style.display = show ? "flex" : "none";
+    if (show) visibleCount++;
   });
 
-  const noJobsMessage = document.getElementById('noJobsMessage');
-  noJobsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
-}
+  document.getElementById("noJobsMessage").style.display = visibleCount
+    ? "none"
+    : "block";
+};
 
-// ========== FILE NAME PREVIEW ==========
-document.getElementById('cvUpload').addEventListener('change', function () {
-  const fileName = this.files[0]?.name || 'Choose file';
-  document.getElementById('cvFileName').textContent = fileName;
-});
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
-// ========== FORM SUBMISSION ==========
-document.getElementById('jobApplicationForm').addEventListener('submit', async function (e) {
-  e.preventDefault();
-
-  const submitBtn = document.querySelector('.submit-btn');
-  const submitText = document.querySelector('.submit-text');
-  const submitSpinner = document.querySelector('.submit-spinner');
-
-  const name = document.getElementById('applicantName').value.trim();
-  const email = document.getElementById('applicantEmail').value.trim();
-  const experience = document.getElementById('applicantExperience').value;
-  const availability = document.getElementById('applicantAvailability').value;
-  const cv = document.getElementById('cvUpload').files[0];
-  const message = document.getElementById('applicantMessage').value.trim();
-
-  if (!name || !email || !experience || !availability || !cv) {
-    showToast("Please complete all required fields", "error");
-    return;
-  }
-
-  submitBtn.disabled = true;
-  if (submitText) submitText.style.display = 'none';
-  if (submitSpinner) submitSpinner.style.display = 'flex';
-
-  try {
-    const formData = new FormData();
-    formData.append('jobId', currentJobId);
-    formData.append('fullName', name);
-    formData.append('email', email);
-    formData.append('experience', experience);
-    formData.append('availability', availability);
-    formData.append('message', message);
-    formData.append('cv', cv);
-
-    await submitApplication(formData);
-    showToast("Application submitted successfully!", "success");
-
-    this.reset();
-    document.getElementById('cvFileName').textContent = 'Choose file';
-    modal.classList.remove('show');
-    document.body.style.overflow = 'auto';
-  } catch (error) {
-    console.error('Application submission failed:', error);
-    showToast("Failed to submit application. Please try again.", "error");
-  } finally {
-    submitBtn.disabled = false;
-    if (submitText) submitText.style.display = 'inline';
-    if (submitSpinner) submitSpinner.style.display = 'none';
-  }
-});
-
-// ========== SUBMIT APPLICATION TO BACKEND ==========
-async function submitApplication(formData) {
-  // For development, determine the base URL
-  const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-    ? 'http://localhost:5000' 
-    : '';
-
-  const response = await fetch(`${baseURL}/api/jobs/apply`, {
-    method: 'POST',
-    body: formData
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || errorData.error || 'Failed to submit application');
-  }
-
-  return await response.json();
-}
-
-// ========== TOAST ==========
-function showToast(message, type = "success") {
-  document.querySelectorAll('.toast').forEach(toast => toast.remove());
-
-  const toast = document.createElement("div");
-  toast.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
-  toast.textContent = message;
-
-  document.body.appendChild(toast);
-  setTimeout(() => toast.classList.add("show"), 100);
-  setTimeout(() => {
-    toast.classList.remove("show");
-    setTimeout(() => toast.remove(), 300);
-  }, 4000);
-}
-
-// ========== ON LOAD ==========
+// ========== INIT ==========
 document.addEventListener("DOMContentLoaded", async () => {
   await loadJobsFromCMS();
   filterJobs();

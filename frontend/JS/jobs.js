@@ -134,7 +134,59 @@ const renderJobs = (jobs) => {
   attachModalEvents();
 };
 
-// ========== EVENTS ==========
+// ========== FORM HANDLING ==========
+const jobForm = document.getElementById('jobApplicationForm');
+const cvsFileInput = document.getElementById('cvUpload');
+const cvsFileName = document.getElementById('cvFileName');
+
+// Display selected file name
+cvsFileInput.addEventListener('change', function (e) {
+  const fileName = e.target.files[0]?.name || 'Choose file';
+  cvsFileName.textContent = fileName;
+});
+
+// Handle form submission
+jobForm.addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const submitBtn = jobForm.querySelector('.submit-btn');
+  const submitText = submitBtn.querySelector('.submit-text');
+  const submitSpinner = submitBtn.querySelector('.submit-spinner');
+
+  submitText.style.display = 'none';
+  submitSpinner.style.display = 'inline';
+  submitBtn.disabled = true;
+
+  try {
+    const formData = new FormData(jobForm);
+    formData.append('jobId', currentJobId);
+
+    const baseURL = 'http://localhost:5000';
+    
+    const res = await fetch(`${baseURL}/api/jobs/apply`, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(errorData.error || `HTTP ${res.status}: ${res.statusText}`);
+    }
+
+    const result = await res.json();
+    alert('Application submitted successfully!');
+    jobForm.reset();
+    cvsFileName.textContent = 'Choose file';
+    document.getElementById('applicationModal').classList.remove('show');
+  } catch (err) {
+    console.error('Form submission error:', err);
+    alert('Error: ' + err.message);
+  } finally {
+    submitText.style.display = 'inline';
+    submitSpinner.style.display = 'none';
+    submitBtn.disabled = false;
+  }
+});
 const attachModalEvents = () => {
   document.querySelectorAll(".apply-btn").forEach((btn) => {
     btn.addEventListener("click", () => {

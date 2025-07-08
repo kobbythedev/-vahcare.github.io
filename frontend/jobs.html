@@ -114,23 +114,23 @@
                 <span class="close-modal">&times;</span>
                 <h2 id="modalJobTitle">Application Form</h2>
                 <form id="jobApplicationForm">
-                    <input type="hidden" id="jobId" />
+                    <input type="hidden" id="jobId" name="jobId" />
 
                     <div class="form-group">
                         <label for="applicantName">Full Name</label>
-                        <input type="text" id="applicantName" required />
+                        <input type="text" id="applicantName" name="fullName" required />
                     </div>
 
                     <div class="form-group">
                         <label for="applicantEmail">Email Address</label>
-                        <input type="email" id="applicantEmail" required />
+                        <input type="email" id="applicantEmail" name="email" required />
                     </div>
 
                     <div class="form-group">
                         <label for="applicantExperience"
                             >Years of relevant experience</label
                         >
-                        <select id="applicantExperience" required>
+                        <select id="applicantExperience" name="experience" required>
                             <option value="">Select experience</option>
                             <option value="0-1">0-1 years</option>
                             <option value="1-3">1-3 years</option>
@@ -145,6 +145,7 @@
                             <input
                                 type="file"
                                 id="cvUpload"
+                                name="cv"
                                 accept=".pdf,.doc,.docx"
                                 required
                             />
@@ -159,7 +160,7 @@
                         <label for="applicantAvailability"
                             >When can you start?</label
                         >
-                        <select id="applicantAvailability" required>
+                        <select id="applicantAvailability" name="availability" required>
                             <option value="">Select availability</option>
                             <option value="immediately">Immediately</option>
                             <option value="1month">Within 1 month</option>
@@ -172,7 +173,7 @@
                             >Why are you interested in this position?
                             (optional)</label
                         >
-                        <textarea id="applicantMessage" rows="3"></textarea>
+                        <textarea id="applicantMessage" name="message" rows="3"></textarea>
                     </div>
 
                     <button type="submit" class="submit-btn">

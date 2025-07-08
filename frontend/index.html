@@ -694,9 +694,7 @@
 
                     try {
                         const response = await fetch(
-                            window.location.hostname.includes("localhost") 
-                                ? "http://localhost:5000/api/contact"
-                                : "https://your-backend-domain.com/api/contact",
+                            "http://localhost:5000/api/contact",
                             {
                                 method: "POST",
                                 headers: {

@@ -1,8 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   // ========= GLOBAL =========
-  const baseURL = window.location.hostname.includes("localhost")
-    ? "http://localhost:5000"
-    : "https://your-backend-domain.com";
+  const baseURL = "http://localhost:5000";
   const contactForm = document.querySelector("form");
 
   // ========= NAVIGATION =========
